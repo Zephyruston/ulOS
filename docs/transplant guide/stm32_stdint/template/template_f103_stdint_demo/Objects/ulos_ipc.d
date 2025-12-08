@@ -1,0 +1,11 @@
+.\objects\ulos_ipc.o: ulOS\kernel\src\ulOS_ipc.c
+.\objects\ulos_ipc.o: .\ulOS\kernel\inc\ulOS_ipc.h
+.\objects\ulos_ipc.o: .\ulOS\kernel\inc\ul_object.h
+.\objects\ulos_ipc.o: .\ulOS\ul_config.h
+.\objects\ulos_ipc.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\ulos_ipc.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\ulos_ipc.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\ulos_ipc.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\objects\ulos_ipc.o: C:\Users\Administrator\AppData\Local\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\ulos_ipc.o: .\ulOS\kernel\inc\ul_heap.h
+.\objects\ulos_ipc.o: .\ulOS\kernel\inc\ulOS_thread.h
