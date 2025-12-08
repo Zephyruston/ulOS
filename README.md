@@ -145,13 +145,7 @@ ulOS的配置通过修改 `ulOS/ul_config.h` 文件实现：
 
 ## 移植指南
 
-ulOS设计为可移植到不同的MCU平台，主要移植工作包括：
-
-1. 实现上下文切换汇编代码
-2. 配置系统定时器中断
-3. 实现临界区保护函数
-
-参考 `ulOS/platform/cortex-m3/` 目录下的Cortex-M3平台实现。
+参考 `ulOS\docs\transplant guide\stm32` 目录下的Cortex-M3平台实现。
 
 ## 许可证
 
