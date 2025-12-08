@@ -163,7 +163,10 @@ ulOS的配置通过修改 `ulOS/ul_config.h` 文件实现：
 
 如有问题或建议，请通过以下方式联系：
 
-- 项目维护者：David Chu
+| 项目维护者 | 邮箱 |
+|-----------|------|
+| David Chu | 2499311743@qq.com |
+| levi_jia | 13533319308@163.com |
 
-- 邮箱：[2499311743@qq.com]
 - 项目地址：[https://gitee.com/David_chu1119/ulOS]
+
