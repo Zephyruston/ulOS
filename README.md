@@ -57,7 +57,7 @@ ulOS提供了丰富的组件库，方便开发者快速构建应用：
 
 # 快速开始
 
-这里是简单创建移植工程的教程，点击跳转 [移植工程示例](docs/transplant%20guide/stm32/example-f103.md)
+这里是简单创建移植工程的教程，点击跳转 [移植工程示例](docs/transplant_guide/stm32/example-f103.md)
 
 ## API参考
 
