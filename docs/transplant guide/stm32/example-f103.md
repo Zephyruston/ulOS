@@ -25,7 +25,9 @@
 
 <img src=".\pic\image-20251208123722056.png" alt="image-20251208123722056" style="zoom: 50%;" />
 
-### 7. 编译无错误，main函数内添加操作系统启动代码，创建启动线程与两个测试线程，具体代码见template文件
+### 7. 编译无错误，main函数内添加操作系统启动代码，创建启动线程与两个测试线程，具体代码见[template目录](./template/)
+
+
 
    ```c
    #include "ulOS_thread.h"
