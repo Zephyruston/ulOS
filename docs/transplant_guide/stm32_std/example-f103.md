@@ -1,36 +1,36 @@
-1.配置好基础工程后，关闭stm32f10x_it.c文件里中断服务函数代码
+**1.配置好基础工程后，关闭stm32f10x_it.c文件里中断服务函数代码**
 
-![1](/docs\transplant%20guide\stm32_stdint\pic\1.png)
+<img src=".\pic\1.png" alt="1" style="zoom:50%;" />
 
-![2](/docs\transplant%20guide\stm32_stdint\pic\2.png)
+<img src=".\pic\2.png" alt="2" style="zoom: 33%;" />
 
-2.新建文件夹`ulOS`
+**2.新建文件夹`ulOS`**
 
-![3](/docs\transplant%20guide\stm32_stdint\pic\3.png)
+<img src=".\pic\3.png" alt="3" style="zoom:50%;" />
 
-3.将源码中的`kernel`，`platform`文件夹与`ul_config.h`移至刚刚创建的文件夹内
+**3.将源码中的`kernel`，`platform`文件夹与`ul_config.h`移至刚刚创建的文件夹内**
 
-![4](/docs\transplant%20guide\stm32_stdint\pic\4.png)
-
-
-
-4.添加头文件路径
-
-![5](/docs\transplant%20guide\stm32_stdint\pic\5.png)
-
-5.添加文件夹，分别添加`ulOS/kernel/src` 与 `ulOS/platform/cortex-m3`内全部文件
-
-![6](/docs\transplant%20guide\stm32_stdint\pic\6.png)
-
-6.在ul_config.h文件里将#include<main.h>这一段注释掉
-
-![7](/docs\transplant%20guide\stm32_stdint\pic\7.png)
-
-![8](/docs\transplant%20guide\stm32_stdint\pic\8.png)
+<img src=".\pic\4.png" alt="4" style="zoom: 33%;" />
 
 
 
-7.编译无错误，main函数内添加操作系统启动代码，创建启动线程与几个测试线程，具体代码见template文件
+**4.添加头文件路径**
+
+<img src=".\pic\5.png" alt="5" style="zoom:33%;" />
+
+**5.添加文件夹，分别添加`ulOS/kernel/src` 与 `ulOS/platform/cortex-m3`内全部文件**
+
+<img src=".\pic\6.png" alt="6" style="zoom:50%;" />
+
+**6.在ul_config.h文件里将#include<main.h>这一段注释掉**
+
+<img src=".\pic\7.png" alt="7" style="zoom: 50%;" />
+
+<img src=".\pic\8.png" alt="8" style="zoom: 33%;" />
+
+
+
+**7.编译无错误，main函数内添加操作系统启动代码，创建启动线程与几个测试线程，具体代码见template文件**
 
 ```c
 #include "ulOS_thread.h"
@@ -99,11 +99,11 @@ int main(void)
 
 ```
 
-![10](/docs\transplant%20guide\stm32_stdint\pic\10.png)
+![10](.\pic\10.png)
 
-![11](docs\transplant%20guide\stm32_stdint\pic\11.png)
+![11](.\pic\11.png)
 
-8.自己写一个1ms的中断服务函数，添加代码如下，编译无错误
+**8.自己写一个1ms的中断服务函数，添加代码如下，编译无错误**
 
 ```c
 
@@ -118,6 +118,6 @@ void TIM2_IRQHandler(void)
 
 ```
 
-![9](/docs\transplant%20guide\stm32_stdint\pic\9.png)
+![9](.\pic\9.png)
 
-9. 编译无错误，下载发现三个LED交替闪烁
+9. **编译无错误，下载发现三个LED交替闪烁**

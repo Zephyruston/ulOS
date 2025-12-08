@@ -3,7 +3,6 @@
  * Change Logs:
  * Date           Author       Notes
  * 2025-11-03     zhuqinsheng   the first version
- * 2025-12-08     zhuqinsheng   É¾³ıÄÚ´æÆÁÕÏ
  */
 #ifndef UL_HEAP_H
 #define UL_HEAP_H

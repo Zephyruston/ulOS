@@ -57,7 +57,7 @@ ulOS提供了丰富的组件库，方便开发者快速构建应用：
 
 # 快速开始
 
-这里是简单创建移植工程的教程，点击跳转 [移植工程示例](docs/transplant_guide/stm32/example-f103.md)
+这里是简单创建移植工程的教程，点击跳转 [移植工程示例](docs/transplant_guide/stm32_hal/example-f103.md)
 
 ## API参考
 
@@ -151,7 +151,7 @@ ulOS的配置通过修改 `ulOS/ul_config.h` 文件实现：
 
 ## 移植指南
 
-参考[ulOS\docs\transplant_guide\stm32](docs/transplant_guide/stm32/) 目录下的Cortex-M3平台实现。
+参考[ulOS\docs\transplant_guide\stm32](docs/transplant_guide/stm32_hal/) 目录下的Cortex-M3平台实现。
 
 ## 许可证
 

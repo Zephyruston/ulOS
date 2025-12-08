@@ -2,7 +2,6 @@
  * Change Logs:
  * Date           Author       Notes
  * 2025-11-03     zhuqinsheng   the first version
- * 2025-12-08     zhuqinsheng   删除内存屏障
  */
 #include "ul_heap.h"
 
@@ -80,6 +79,10 @@ static void _heap_init(void)
     first_block->next = UL_NULL;
 
     g_heap_manager.free_list = first_block;
+
+    /* 内存屏障，确保数据写入完成 */
+    //__dsb(0xF);
+    //__DSB();
 }
 
 /**
