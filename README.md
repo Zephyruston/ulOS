@@ -149,7 +149,7 @@ ulOS的配置通过修改 `ulOS/ul_config.h` 文件实现：
 
 ## 移植指南
 
-参考 `ulOS\docs\transplant guide\stm32` 目录下的Cortex-M3平台实现。
+参考[ulOS\docs\transplant%20guide\stm32](docs/transplant%20guide/stm32/) 目录下的Cortex-M3平台实现。
 
 ## 许可证
 
