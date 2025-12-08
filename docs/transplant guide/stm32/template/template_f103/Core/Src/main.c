@@ -3,6 +3,7 @@
   ******************************************************************************
   * @file           : main.c
   * @brief          : Main program body
+  *                   主程序入口，演示ulOS在STM32F103上的移植和多线程应用
   ******************************************************************************
   * @attention
   *
@@ -23,7 +24,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "ulOS_thread.h"
+#include "ulOS_thread.h"  // 包含ulOS线程管理API
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -55,34 +56,58 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+/**
+ * @brief 线程1的执行函数
+ * @param p 线程参数指针
+ * @note 该线程负责控制GPIO_PIN_2引脚的LED以100ms间隔闪烁
+ */
 void thread1_entry(void *p)
 {
     while(1)
     {
+        // 翻转GPIOC的第2号引脚状态，控制LED闪烁
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_2);
+        // 线程延时100个系统tick，实现100ms延时
         ul_thread_delay(100);
     }
 }
 
+/**
+ * @brief 线程2的执行函数
+ * @param p 线程参数指针
+ * @note 该线程负责控制GPIO_PIN_13引脚的LED以300ms间隔闪烁
+ */
 void thread2_entry(void *p)
 {
     while(1)
     {
+        // 翻转GPIOC的第13号引脚状态，控制LED闪烁
         HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+        // 线程延时300个系统tick，实现300ms延时
         ul_thread_delay(300);
     }
 }
 
+/**
+ * @brief 启动线程，用于创建和启动其他应用线程
+ * @param p 线程参数指针
+ * @note 该线程负责创建并启动thread1和thread2，然后自身进入低优先级循环
+ */
 void start_thread_entry(void *p)
 {
+    // 创建线程1：名称"t1"，入口函数thread1_entry，无参数，栈大小512字节，优先级0（最高），时间片1
     ul_thread_t *tid1 = ul_thread_create("t1", thread1_entry, UL_NULL, 512, 0, 1);
+    // 创建线程2：名称"t2"，入口函数thread2_entry，无参数，栈大小512字节，优先级0（最高），时间片1
     ul_thread_t *tid2 = ul_thread_create("t2", thread2_entry, UL_NULL, 512, 0, 1);
     
+    // 启动线程1和线程2
     ul_thread_startup(tid1);
     ul_thread_startup(tid2);
     
     while(1)
     {
+        // 该线程自身延时10个系统tick，让出CPU给其他任务
         ul_thread_delay(10);
     }
 }
@@ -119,10 +144,13 @@ int main(void)
   MX_GPIO_Init();
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
+    // 初始化ulOS内核
     ul_kernel_init();
     
+    // 创建并启动start线程：名称"start"，入口函数start_thread_entry，无参数，栈大小512字节，优先级1，时间片1
     ul_thread_startup(ul_thread_create("start", start_thread_entry, UL_NULL, 512, 1, 1));
     
+    // 启动ulOS调度器，开始多线程调度
     ul_scheduler_start();
   /* USER CODE END 2 */
 
@@ -133,6 +161,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    // 此处不会被执行，因为调度器已经启动，控制权交给了ulOS
   }
   /* USER CODE END 3 */
 }
