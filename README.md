@@ -6,7 +6,7 @@
 
 ## 主要特性
 
-- **多任务调度**：支持抢占式优先级调度，最多支持8个优先级
+- **多任务调度**：支持抢占式优先级调度+可编辑的时间片调度，无优先级数量限制
 - **同步机制**：提供互斥锁(Mutex)用于资源保护
 - **通信机制**：支持信号量(Semaphore)、队列(Queue)和事件(Event)等IPC机制
 - **定时器服务**：提供软件定时器功能
@@ -21,19 +21,8 @@ ulOS/
 │   ├── inc/            # 内核头文件
 │   └── src/            # 内核源文件
 ├── component/          # 组件代码
-│   ├── inc/            # 组件头文件
-│   └── src/            # 组件源文件
 ├── example/            # 示例代码
-│   ├── critical_section.c
-│   ├── event.c
-│   ├── priority_inversion.c
-│   ├── queue.c
-│   ├── semaphore.c
-│   └── timer.c
 ├── platform/           # 平台相关代码
-│   └── cortex-m3/      # Cortex-M3平台适配
-│       ├── ulOS_cpuport.c
-│       └── ulOS_cpuport_asm.s
 └── ul_config.h         # 系统配置文件
 ```
 
@@ -65,27 +54,6 @@ ulOS提供了丰富的组件库，方便开发者快速构建应用：
 - **ul_topic**: 发布-订阅模式通信组件，支持模块间解耦通信
 
 这些组件设计为可独立使用，也可以与ulOS内核无缝集成，提供了丰富的功能支持，大大简化了嵌入式应用的开发过程。
-
-## 快速开始
-
-### 环境要求
-
-- 开发板：STM32F103RET6或兼容开发板
-- 开发环境：Keil MDK-ARM
-- ST-Link调试器
-
-### 编译和下载
-
-1. 使用Keil MDK-ARM打开项目文件 `MDK-ARM/ulOS_kernel_test_v1.uvprojx`
-2. 选择目标设备为STM32F103RE
-3. 点击"Build"按钮编译项目
-4. 连接ST-Link调试器，点击"Download"按钮下载程序到开发板
-
-### 运行示例
-
-程序下载后，将看到两个LED以不同频率闪烁：
-- PC2引脚连接的LED每100ms闪烁一次
-- PC13引脚连接的LED每300ms闪烁一次
 
 ## API参考
 
@@ -189,12 +157,19 @@ ulOS设计为可移植到不同的MCU平台，主要移植工作包括：
 
 本项目采用MIT许可证，详见LICENSE文件。
 
-## 贡献
+## 如何贡献
 
-欢迎提交Issue和Pull Request来改进ulOS。
+1. Fork 项目
+2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 创建 Pull Request
 
 ## 联系方式
 
 如有问题或建议，请通过以下方式联系：
+
+- 项目维护者：David Chu
+
 - 邮箱：[2499311743@qq.com]
-- Gitee：[https://gitee.com/David_chu1119/ulOS]
+- 项目地址：[https://gitee.com/David_chu1119/ulOS]
