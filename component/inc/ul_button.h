@@ -22,7 +22,7 @@ typedef enum
     UL_BUTTON_EVENT_DOUBLE_CLICK   = 0x03,    /* 双击事件 */
 } button_event_e;
 
-/* 前向声明 */
+/* 对象类型声明 */
 typedef struct ul_button ul_button_t;
 
 /* 回调函数类型定义 */
