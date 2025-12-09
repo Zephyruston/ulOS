@@ -20,7 +20,6 @@ struct ul_max6675
 {
     ul_fp32_t temp;
     /* 移植接口 */
-    
     /**
       * @brief 设置CS引脚电平
       * @param pin_state 为1时实现CS高电平，为0时实现CS低电平
