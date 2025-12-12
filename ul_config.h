@@ -49,7 +49,7 @@ typedef enum {
 
 /* ==================== 系统配置 ==================== */
 // 任务优先级
-#define ULOS_CONFIG_MAX_PRIORITY    ( 8 )   // 无限制，0为最高优先级
+#define ULOS_CONFIG_MAX_PRIORITY    ( 32 )   // 无限制，0为最高优先级
 #define ULOS_MAX_TICK               (0xFFFFFFFFFFFFFFFFUL)
 #define ULOS_MAX_DELAY              ULOS_MAX_TICK
 
@@ -67,43 +67,22 @@ typedef enum {
 #define ULOS_CONFIG_USE_IDLEHOOK   ( 0 )
 #define ULOS_CONFIG_USE_TICKHOOK   ( 0 )
 
+#define ULOS_CONFIG_SCHED_ALG_FFS   ( 1 )
 
 // 内存配置
 #define UL_HEAP_SIZE        ((ul_size_t)(1024 * 10))   /* 堆大小 x KB */
 
 /* ==================== 断言配置 ==================== */
-#define ULOS_CONFIG_USE_ASSERT      ( 0 )
+#define ULOS_CONFIG_USE_ASSERT      ( 1 )
 #if ( ULOS_CONFIG_USE_ASSERT == 1 )
-#define UL_ASSERT(x)   
+#define UL_ASSERT(EX)                                                         \
+if (!(EX))                                                                    \
+{                                                                             \
+    ul_assert_handler(#EX, __FILE__, __LINE__);                           \
+} 
 #else
 #define UL_ASSERT(x)   
 #endif
-/* ==================== 平台适配层 ==================== */
-#ifdef RTTHREAD
-#include "rtthread.h"
-#define ul_malloc   rt_malloc
-#define ul_free     rt_free
-#define ul_memcpy   rt_memcpy
-#define ul_delay_ms rt_thread_mdelay
-
-#elif defined(FREERTOS)
-#include "freertos.h"
-#define ul_malloc   pvPortMalloc
-#define ul_free     vPortFree
-#define ul_memcpy   memcpy
-#define ul_delay_ms vTaskDelay
-
-#else
-// 默认使用标准库
-#include <stdlib.h>
-#include <string.h>
-#include <main.h>
-
-//#define ul_malloc   malloc
-//#define ul_free     free
-//#define ul_memcpy   memcpy
-//#define ul_delay_ms HAL_Delay
-#endif  /* 平台适配层 */
 
 #ifdef __cplusplus
 }
