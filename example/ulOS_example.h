@@ -9,5 +9,8 @@ void example_queue(void);
 void example_semaphore(void);
 int example_event(void);
 int example_timer(void);
+void example_dynamic_memmory(void);
+void example_delay_until(void);
+
 
 #endif
