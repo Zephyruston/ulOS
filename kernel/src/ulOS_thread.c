@@ -2,21 +2,47 @@
  * Change Logs:
  * Date           Author       Notes
  * 2025-12-4     zhuqinsheng   the first version
+ * 2025-12-12    zhuqinsheng   优化调度算法
  */
 
 #include "ulOS_thread.h"
 #include "ul_libc.h"
 #include "ulOS_idle.h"
+#include "ulOS_debug.h"
 
 /* ==================== 全局变量定义 ==================== */
 static volatile ul_tick_t ulOS_tick = 0;                    // 系统时钟计数
 static volatile ul_uint8_t ulOS_start_flag = 0;        // 系统启动标志
 struct ul_thread *ul_current_thread;                  // 当前运行线程指针
-static ul_uint8_t ul_current_highest_priority = ULOS_CONFIG_MAX_PRIORITY;  // 当前最高优先级
+ul_uint8_t ul_current_highest_priority = ULOS_CONFIG_MAX_PRIORITY - 1;  // 当前最高优先级
 static ul_base_t ul_scheduler_lock_count = 0;          // 调度器锁计数器
-static ul_list_t ul_ready_thread_list[ULOS_CONFIG_MAX_PRIORITY];  // 就绪线程队列数组
+ul_list_t ul_ready_thread_list[ULOS_CONFIG_MAX_PRIORITY];  // 就绪线程队列数组
 static ul_list_t ul_delay_thread_list;                       // 延时线程队列
 static ul_tick_t ul_next_wake_time = ULOS_MAX_TICK;          // 下一个唤醒时间
+
+#if ( ULOS_CONFIG_SCHED_ALG_FFS == 1 )
+volatile ul_uint32_t ul_thread_ready_priority_group = 0;
+
+const static ul_uint8_t __lowest_bit_bitmap[] =
+{
+    /* 00 */ 0, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+    /* 10 */ 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+    /* 20 */ 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+    /* 30 */ 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+    /* 40 */ 6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+    /* 50 */ 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+    /* 60 */ 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+    /* 70 */ 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+    /* 80 */ 7, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+    /* 90 */ 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+    /* A0 */ 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+    /* B0 */ 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+    /* C0 */ 6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+    /* D0 */ 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+    /* E0 */ 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+    /* F0 */ 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0
+};
+#endif /* ULOS_CONFIG_SCHED_ALG_FFS == 1 */
 
 /* 外部函数声明 */
 extern void ul_hw_context_switch(ul_uint32_t from, ul_uint32_t to);
@@ -54,8 +80,8 @@ static void thread_exit_entry(void)
 ul_ecode ul_thread_init(struct ul_thread *self,
                         const char *name,
                         void (*entry)(void *p),
-                        void* parameter,
-                        void* stack_start,
+                        void *parameter,
+                        void *stack_start,
                         ul_size_t stack_size,
                         ul_uint8_t priority,
                         ul_uint8_t time_slice)
@@ -97,7 +123,7 @@ ul_ecode ul_thread_init(struct ul_thread *self,
 /**
  * @brief 创建线程
  */
-ul_thread_t* ul_thread_create(const char *name,
+ul_thread_t *ul_thread_create(const char *name,
                               void (*entry)(void *p),
                               void *parameter,
                               ul_size_t stack_size,
@@ -151,7 +177,7 @@ void ul_thread_delete(ul_thread_t *thread)
 /**
  * @brief 获取当前线程
  */
-ul_thread_t* ul_thread_self(void)
+ul_thread_t *ul_thread_self(void)
 {
     return ul_current_thread;
 }
@@ -183,10 +209,11 @@ ul_size_t ul_thread_stack_remain(ul_thread_t *thread)
 /**
  * @brief 查找线程对象
  */
-ul_thread_t* ul_thread_find(const char *name)
+ul_thread_t *ul_thread_find(const char *name)
 {
     return (ul_thread_t*)ul_object_find(name, UL_OBJECT_CLASS_THREAD);
 }
+
 /* ==================== 调度器相关函数 ==================== */
 
 /**
@@ -204,12 +231,32 @@ void ul_scheduler_init(void)
     ul_list_init(&ul_delay_thread_list);
 }
 
+#if ( ULOS_CONFIG_SCHED_ALG_FFS == 1 )
+static ul_uint8_t _ul_ffs(ul_uint32_t value)
+{
+    if (value == 0) return ULOS_CONFIG_MAX_PRIORITY + 1;// 表示空闲线程在运行
+
+    if (value & 0xff)
+        return __lowest_bit_bitmap[value & 0xff] + 1;
+
+    if (value & 0xff00)
+        return __lowest_bit_bitmap[(value & 0xff00) >> 8] + 9;
+
+    if (value & 0xff0000)
+        return __lowest_bit_bitmap[(value & 0xff0000) >> 16] + 17;
+
+    return __lowest_bit_bitmap[(value & 0xff000000) >> 24] + 25;
+}
+
+#endif /* ULOS_CONFIG_SCHED_ALG_FFS == 1 */
+
 /**
  * @brief 查找最高优先级
  * @return 最高优先级值
  */
 static ul_uint8_t ul_find_highest_priority(void)
 {
+
     // 从最高优先级(0)开始查找
     for (ul_uint8_t priority = 0; priority < ULOS_CONFIG_MAX_PRIORITY; priority++)
     {
@@ -219,7 +266,7 @@ static ul_uint8_t ul_find_highest_priority(void)
         }
     }
 
-    return ULOS_CONFIG_MAX_PRIORITY;  // 没有就绪任务
+    return ULOS_CONFIG_MAX_PRIORITY;  // 空闲任务在运行
 }
 
 /**
@@ -238,11 +285,20 @@ void _thread_insert_ready_list(struct ul_thread *thread)
     ul_list_insert_before(&ul_ready_thread_list[priority], &thread->tlist);
     thread->state = UL_THREAD_STATE_READY;
 
-    // 更新最高优先级
+#if (ULOS_CONFIG_SCHED_ALG_FFS == 1)
+    /* ---------- FFS位图算法 ---------- */
+    ul_thread_ready_priority_group |= (1UL << thread->current_priority);
+    ul_current_highest_priority = _ul_ffs(ul_thread_ready_priority_group) - 1;
+#else
+
+    /* ---------- 轮询查找算法 ---------- */
+    // 只要新线程优先级 < 当前记录的最高优先级，
     if (priority < ul_current_highest_priority)
     {
-        ul_current_highest_priority = priority;
+        ul_current_highest_priority = ul_find_highest_priority();
     }
+
+#endif /* ULOS_CONFIG_SCHED_ALG_FFS == 1 */
 }
 
 /**
@@ -250,14 +306,34 @@ void _thread_insert_ready_list(struct ul_thread *thread)
  */
 void _thread_remove_ready_list(struct ul_thread *thread)
 {
+    ul_uint8_t priority = thread->current_priority;
     ul_list_remove(&thread->tlist);
     thread->state &= (~UL_THREAD_STATE_READY);
 
-    // 如果移除的是当前最高优先级任务，需要重新查找
-    if (thread->current_priority == ul_current_highest_priority)
+#if (ULOS_CONFIG_SCHED_ALG_FFS == 1)
+
+    /* ---------- FFS位图算法 ---------- */
+    if (ul_list_isempty(&ul_ready_thread_list[priority]))
+    {
+        ul_thread_ready_priority_group &= ~(1UL << priority);
+    }
+
+    if (priority == ul_current_highest_priority)
+    {
+        ul_current_highest_priority = _ul_ffs(ul_thread_ready_priority_group) - 1;
+    }
+
+#else
+
+    /* ---------- 轮询查找算法 ---------- */
+    // 只有当移除的线程属于当前记录的最高优先级，且该优先级列表变空时，才需要查找新的最高优先级
+    if ((priority == ul_current_highest_priority) &&
+            ul_list_isempty(&ul_ready_thread_list[priority]))
     {
         ul_current_highest_priority = ul_find_highest_priority();
     }
+
+#endif /* ULOS_CONFIG_SCHED_ALG_FFS == 1 */
 }
 
 /**
@@ -267,16 +343,14 @@ void ul_scheduler_start(void)
 {
     struct ul_thread *to_thread;
 
-    // 查找最高优先级任务
-    ul_current_highest_priority = ul_find_highest_priority();
+    UL_ASSERT(ul_current_highest_priority == ul_find_highest_priority());
     to_thread = ul_list_entry(ul_ready_thread_list[ul_current_highest_priority].next,
                               struct ul_thread, tlist);
 
     // 设置当前任务
     ul_current_thread = to_thread;
-    to_thread->state = UL_THREAD_STATE_RUNNING;
     _thread_remove_ready_list(to_thread);
-
+    to_thread->state = UL_THREAD_STATE_RUNNING;
     // 启动调度
     ul_hw_interrupt_disable();
     ulOS_start_flag = 1;
@@ -301,9 +375,9 @@ void ul_schedule(void)
     ul_base_t level = ul_hw_interrupt_disable();
 
     // 查找最高优先级任务
-    ul_current_highest_priority = ul_find_highest_priority();
+    UL_ASSERT(ul_current_highest_priority == ul_find_highest_priority());
 
-    if (ul_current_highest_priority == ULOS_CONFIG_MAX_PRIORITY)
+    if (ul_current_highest_priority == ULOS_CONFIG_MAX_PRIORITY)    // 只有空闲任务在运行，不用切换
     {
         ul_hw_interrupt_enable(level);
         return;
@@ -320,7 +394,7 @@ void ul_schedule(void)
         return;
     }
 
-    // 处理当前任务
+    // 处理当前任务，这里要改，如果是因为优先级被切换的，不能重新放最后？不一定
     if (ul_current_thread->state == UL_THREAD_STATE_RUNNING)
     {
         _thread_remove_ready_list(ul_current_thread);
@@ -330,8 +404,8 @@ void ul_schedule(void)
     // 切换上下文
     from_thread = ul_current_thread;
     ul_current_thread = to_thread;
-    to_thread->state = UL_THREAD_STATE_RUNNING;
     _thread_remove_ready_list(to_thread);
+    to_thread->state = UL_THREAD_STATE_RUNNING;
 
     ul_hw_context_switch((ul_uint32_t)&from_thread->stack_top,
                          (ul_uint32_t)&to_thread->stack_top);
@@ -376,7 +450,7 @@ ul_ecode ul_thread_control_set_priority(struct ul_thread *thread, ul_uint8_t pri
     thread->current_priority = priority;
 
     // 如果线程正在运行或就绪，重新插入队列
-    if (thread->state & UL_THREAD_STATE_READY )
+    if (thread->state & UL_THREAD_STATE_READY)
     {
         _thread_remove_ready_list(thread);
         _thread_insert_ready_list(thread);
@@ -640,9 +714,10 @@ void ul_tick_increase(void)
     }
 
     // 检查是否需要调度
-    ul_uint8_t highest_priority = ul_find_highest_priority();
 
-    if (thread->remaining_tick == 0 || highest_priority < thread->current_priority)
+    UL_ASSERT(ul_current_highest_priority == ul_find_highest_priority());
+
+    if (thread->remaining_tick == 0 || ul_current_highest_priority < thread->current_priority)
     {
         if (thread->remaining_tick == 0)
         {
@@ -720,10 +795,10 @@ void ul_kernel_init(void)
 {
     // 初始化调度器
     ul_scheduler_init();
-    
+
     // 创建空闲线程
     ul_idle_thread_create();
-    
+
 #if ( ULOS_CONFIG_USE_TOPIC == 1 )
     // 创建主题处理线程
     static struct ul_thread *topic_thread_handle;
@@ -735,7 +810,7 @@ void ul_kernel_init(void)
                                            1);
     ul_thread_startup(topic_thread_handle);
 #endif
-    
+
 #if ( ULOS_CONFIG_USE_TIMER == 1 )
     extern ul_ecode ul_timer_thread_create(void);
     ul_timer_thread_create();
