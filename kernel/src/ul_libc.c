@@ -9,9 +9,6 @@
 
 void *ul_memcpy(void *dest, const void *src, ul_size_t n)
 {
-    UL_ASSERT(dest != UL_NULL);
-    UL_ASSERT(src != UL_NULL);
-    
     char *d = (char *)dest;
     const char *s = (const char *)src;
     
@@ -25,9 +22,6 @@ void *ul_memcpy(void *dest, const void *src, ul_size_t n)
 
 void *ul_memmove(void *dest, const void *src, ul_size_t n)
 {
-    UL_ASSERT(dest != UL_NULL);
-    UL_ASSERT(src != UL_NULL);
-    
     char *d = (char *)dest;
     const char *s = (const char *)src;
     
@@ -53,8 +47,6 @@ void *ul_memmove(void *dest, const void *src, ul_size_t n)
 
 void *ul_memset(void *s, int c, ul_size_t n)
 {
-    UL_ASSERT(s != UL_NULL);
-    
     unsigned char *p = (unsigned char *)s;
     unsigned char value = (unsigned char)c;
     
@@ -67,9 +59,6 @@ void *ul_memset(void *s, int c, ul_size_t n)
 
 int ul_memcmp(const void *s1, const void *s2, ul_size_t n)
 {
-    UL_ASSERT(s1 != UL_NULL);
-    UL_ASSERT(s2 != UL_NULL);
-    
     const unsigned char *p1 = (const unsigned char *)s1;
     const unsigned char *p2 = (const unsigned char *)s2;
     
@@ -84,8 +73,6 @@ int ul_memcmp(const void *s1, const void *s2, ul_size_t n)
 
 void *ul_memchr(const void *s, int c, ul_size_t n)
 {
-    UL_ASSERT(s != UL_NULL);
-    
     const unsigned char *p = (const unsigned char *)s;
     unsigned char value = (unsigned char)c;
     
@@ -102,9 +89,6 @@ void *ul_memchr(const void *s, int c, ul_size_t n)
 
 char *ul_strcpy(char *dest, const char *src)
 {
-    UL_ASSERT(dest != UL_NULL);
-    UL_ASSERT(src != UL_NULL);
-    
     char *d = dest;
     
     while ((*d++ = *src++) != '\0') {
@@ -116,9 +100,6 @@ char *ul_strcpy(char *dest, const char *src)
 
 char *ul_strncpy(char *dest, const char *src, ul_size_t n)
 {
-    UL_ASSERT(dest != UL_NULL);
-    UL_ASSERT(src != UL_NULL);
-    
     char *d = dest;
     ul_size_t i;
     
@@ -136,9 +117,6 @@ char *ul_strncpy(char *dest, const char *src, ul_size_t n)
 
 char *ul_strcat(char *dest, const char *src)
 {
-    UL_ASSERT(dest != UL_NULL);
-    UL_ASSERT(src != UL_NULL);
-    
     char *d = dest;
     
     /* 找到dest的结尾 */
@@ -156,9 +134,6 @@ char *ul_strcat(char *dest, const char *src)
 
 char *ul_strncat(char *dest, const char *src, ul_size_t n)
 {
-    UL_ASSERT(dest != UL_NULL);
-    UL_ASSERT(src != UL_NULL);
-    
     char *d = dest;
     
     /* 找到dest的结尾 */
@@ -179,9 +154,6 @@ char *ul_strncat(char *dest, const char *src, ul_size_t n)
 
 int ul_strcmp(const char *s1, const char *s2)
 {
-    UL_ASSERT(s1 != UL_NULL);
-    UL_ASSERT(s2 != UL_NULL);
-    
     while (*s1 && (*s1 == *s2)) {
         s1++;
         s2++;
@@ -192,9 +164,6 @@ int ul_strcmp(const char *s1, const char *s2)
 
 int ul_strncmp(const char *s1, const char *s2, ul_size_t n)
 {
-    UL_ASSERT(s1 != UL_NULL);
-    UL_ASSERT(s2 != UL_NULL);
-    
     if (n == 0) {
         return 0;
     }
@@ -209,8 +178,6 @@ int ul_strncmp(const char *s1, const char *s2, ul_size_t n)
 
 ul_size_t ul_strlen(const char *s)
 {
-    UL_ASSERT(s != UL_NULL);
-    
     const char *p = s;
     while (*p != '\0') {
         p++;
@@ -221,8 +188,6 @@ ul_size_t ul_strlen(const char *s)
 
 char *ul_strchr(const char *s, int c)
 {
-    UL_ASSERT(s != UL_NULL);
-    
     while (*s != '\0') {
         if (*s == (char)c) {
             return (char *)s;
@@ -235,8 +200,6 @@ char *ul_strchr(const char *s, int c)
 
 char *ul_strrchr(const char *s, int c)
 {
-    UL_ASSERT(s != UL_NULL);
-    
     const char *last = UL_NULL;
     
     while (*s != '\0') {
@@ -251,9 +214,6 @@ char *ul_strrchr(const char *s, int c)
 
 char *ul_strstr(const char *haystack, const char *needle)
 {
-    UL_ASSERT(haystack != UL_NULL);
-    UL_ASSERT(needle != UL_NULL);
-    
     if (*needle == '\0') {
         return (char *)haystack;
     }
@@ -279,8 +239,6 @@ char *ul_strstr(const char *haystack, const char *needle)
 
 int ul_atoi(const char *nptr)
 {
-    UL_ASSERT(nptr != UL_NULL);
-    
     int result = 0;
     int sign = 1;
     
@@ -308,9 +266,6 @@ int ul_atoi(const char *nptr)
 
 char *ul_itoa(int value, char *str, int base)
 {
-    UL_ASSERT(str != UL_NULL);
-    UL_ASSERT(base >= 2 && base <= 36);
-    
     char *ptr = str;
     char *start = str;
     char *end;
