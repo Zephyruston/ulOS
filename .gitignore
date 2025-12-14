@@ -27,13 +27,18 @@ output/
 .DS_Store
 Thumbs.db
 
-# Keil MDK
+# Keil MDK (但允许移植指南中的文件)
 *.uvprojx
 *.uvoptx
 *.crun
 *.plg
 *.scvd
 *.uvguix.*
+
+# 允许移植指南中的Keil项目文件
+!docs/transplant_guide/**/*.uvprojx
+!docs/transplant_guide/**/*.uvoptx
+!docs/transplant_guide/**/*.uvguix.*
 
 # IAR Embedded Workbench
 *.ewp
