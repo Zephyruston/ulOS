@@ -1,0 +1,96 @@
+# 编译输出文件
+*.o
+*.obj
+*.elf
+*.axf
+*.bin
+*.hex
+*.map
+*.out
+*.exe
+
+# 编译器和构建工具生成的目录
+build/
+_build/
+Debug/
+Release/
+output/
+.tmp/
+*.tmp
+
+# IDE和编辑器文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Keil MDK (但允许移植指南中的文件)
+*.uvprojx
+*.uvoptx
+*.crun
+*.plg
+*.scvd
+*.uvguix.*
+
+# 允许移植指南中的Keil项目文件
+!docs/transplant_guide/**/*.uvprojx
+!docs/transplant_guide/**/*.uvoptx
+!docs/transplant_guide/**/*.uvguix.*
+
+# IAR Embedded Workbench
+*.ewp
+*.eww
+*.ewd
+*.dep
+*.bin.d
+*.pbi
+*.pbd
+
+# GCC ARM Embedded
+*.d
+
+# 链接脚本和启动文件（如果平台特定）
+*.ld
+*.lds
+
+# 日志文件
+*.log
+
+# 临时文件
+*.temp
+*.bak
+*.backup
+
+# 文档生成工具输出
+docs/_build/
+docs/doxygen/
+
+# 测试和覆盖率报告
+test/output/
+coverage/
+*.gcda
+*.gcno
+*.lcov
+
+# 静态分析工具输出
+cppcheck-report.xml
+scan-build/
+
+# 依赖文件
+*.d
+*.dep
+
+# 配置文件（如果用户可能自定义）
+ul_config_user.h
+
+# 仿真器文件
+*.jlink
+*.cfg
+
+# Python生成的文件
+__pycache__/
+*.py[cod]
+*$py.class
