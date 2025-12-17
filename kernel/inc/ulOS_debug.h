@@ -12,6 +12,16 @@
 extern "C" {
 #endif  /* __cplusplus */
 
+#if (ULOS_CONFIG_USE_ASSERT == 1)
+#define UL_ASSERT(EX)                                                         \
+if (!(EX))                                                                    \
+{                                                                             \
+    ul_assert_handler(#EX, __FILE__, __LINE__);                           \
+} 
+#else
+#define UL_ASSERT(x)   
+#endif
+
 void ul_assert_handler(const char *expr, const char *func, int line);
 
 #ifdef __cplusplus
