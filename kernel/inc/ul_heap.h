@@ -59,7 +59,7 @@ ul_uint32_t ul_heap_get_alloc_fail_count(void);
  * - 空闲链表结构
  * - 历史统计信息
  */
-void ul_heap_print(void);
+//void ul_heap_print(void);
 
 #ifdef __cplusplus
 }
