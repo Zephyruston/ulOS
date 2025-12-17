@@ -1,4 +1,8 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2025-7-17     zhuqinsheng   the first version for ul_pin
@@ -185,7 +189,7 @@ ul_ecode ul_pin_delete(ul_pin_t * self)
         return UL_ERROR;
     }
     /* 从pin链表移除 */
-    ul_list_remove(&self->priv.node);
+    ul_list_del_init(&self->priv.node);
     
     /* 动态的对象需要释放内存 */
     if (self->parent.flag & UL_OBJECT_FLAG_DYNAMIC)

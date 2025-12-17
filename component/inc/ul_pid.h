@@ -1,11 +1,15 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *_
  * Change Logs:
  * Date           Author       Notes
  * 2025-8-12     zhuqinsheng   the first version
  * 2025-9-01     zhuqinsheng   修改了一些程序BUG，防止除数为0的情况
  */
-#ifndef UL_PID_H
-#define UL_PID_H
+#ifndef _UL_PID_H
+#define _UL_PID_H
 
 #include "ul_config.h"
 

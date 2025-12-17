@@ -1,4 +1,8 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *_
  * Change Logs:
  * Date           Author       Notes
  * 2025-7-17     zhuqinsheng   the first version for ul_pin
@@ -7,8 +11,8 @@
  * 2025-9-3      zhuqinsheng   修改了初始化方法
  * 2025-11-1     zhuqinsheng   修改了框架，增加注册查找机制，进一步解耦
  */
-#ifndef UL_PIN_H
-#define UL_PIN_H
+#ifndef _UL_PIN_H
+#define _UL_PIN_H
 
 #include "ul_object.h"
 

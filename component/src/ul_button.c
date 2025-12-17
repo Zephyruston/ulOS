@@ -1,4 +1,8 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2025-7-21     zhuqinsheng   the first version
@@ -276,7 +280,7 @@ ul_ecode ul_button_delete(ul_button_t * self)
     }
 
     /* 从button链表移除 */
-    ul_list_remove(&self->node);
+    ul_list_del_init(&self->node);
 
     /* 动态的对象需要释放内存 */
     if (self->type & UL_BUTTON_TYPE_DYNAMIC)

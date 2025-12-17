@@ -1,4 +1,8 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2025-8-12     zhuqinsheng   the first version
@@ -191,7 +195,7 @@ static void ul_w25qxx_program_page(ul_dev_w25qxx_t *self, ul_uint32_t addr, ul_u
 #define PAGE_SIZE   256u//页空间256Byte
 void ul_w25qxx_write(ul_dev_w25qxx_t *self, ul_uint32_t memaddr, ul_uint8_t *pdata, ul_uint16_t datalen)
 {
-    ul_uint16_t j, temp;
+    ul_uint16_t temp;
     
     int num = (memaddr % PAGE_SIZE) + datalen;
     num = num - PAGE_SIZE;//是否需要“跨”页写
@@ -226,7 +230,7 @@ void ul_w25qxx_write(ul_dev_w25qxx_t *self, ul_uint32_t memaddr, ul_uint8_t *pda
 
 void ul_w25qxx_read(ul_dev_w25qxx_t *self, ul_uint32_t memaddr, ul_uint8_t *pdata, ul_uint16_t datalen)
 {
-    ul_uint16_t j, temp;
+    ul_uint16_t temp;
 
     int num = (memaddr % PAGE_SIZE) + datalen;
     num = num - PAGE_SIZE;//是否需要“跨”页读
@@ -269,4 +273,6 @@ ul_ecode ul_w25qxx_init(ul_dev_w25qxx_t *self, ul_uint8_t xx)
 
     self->cs_write(1);
     self->xx = xx;
+    
+    return UL_EOK;
 }

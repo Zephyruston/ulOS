@@ -1,10 +1,14 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2025-9-3     zhuqinsheng   the first version
  */
-#ifndef UL_BUZZER_H
-#define UL_BUZZER_H
+#ifndef _UL_BUZZER_H
+#define _UL_BUZZER_H
 
 #include "ul_config.h"
 #include "ul_list.h"

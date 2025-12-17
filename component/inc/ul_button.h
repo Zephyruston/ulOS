@@ -1,12 +1,16 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2025-7-21     zhuqinsheng   the first version
  * 2025-8-13     zhuqinsheng   修改了ul_button_t的一些属性, 主要增加了type成员
  * 2025-12-9     zhuqinsheng   优化了初始化机制,新增长按循环触发功能
  */
-#ifndef __UL_BUTTON_H__
-#define __UL_BUTTON_H__
+#ifndef _UL_BUTTON_H
+#define _UL_BUTTON_H
 
 #include "ul_config.h"
 
