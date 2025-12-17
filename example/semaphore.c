@@ -1,8 +1,8 @@
 #include "ulOS_example.h"
 #if (ULOS_CONFIG_USE_SEMAPHORE != 0)
 
-#include "ulOS_thread.h"
-#include "ulOS_ipc.h"
+#include "ul_thread.h"
+#include "ul_ipc.h"
 
 /* 指向信号量的指针 */
 ul_sem_t *dynamic_sem = UL_NULL;

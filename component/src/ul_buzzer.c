@@ -1,4 +1,8 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2025-7-17     zhuqinsheng   the first version for ul_buzzer
@@ -8,6 +12,7 @@
  */
 
 #include "ul_buzzer.h"
+#include "ul_object.h"
 
 #define BUZZER_STAGE_NEW_CYCLE     0
 #define BUZZER_STAGE_OFF           1
@@ -120,7 +125,7 @@ static void ul_list_head_node_create(ul_list_t *head)
     {
         ul_list_init(head);
 
-        if (ul_list_isempty(head))
+        if (ul_list_is_empty(head))
         {
             ul_list_head_node_created_flag = 1;
         }
@@ -194,7 +199,7 @@ ul_ecode ul_buzzer_delete(ul_buzzer_t * self)
         return UL_ERROR;
     }
     /* 从buzzer链表移除 */
-    ul_list_remove(&self->node);
+    ul_list_del_init(&self->node);
     
     /* 动态的对象需要释放内存 */
     if (self->type & UL_BUZZER_TYPE_DYNAMIC)

@@ -1,11 +1,15 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *_
  * Change Logs:
  * Date           Author       Notes
  * 2025-8-12     zhuqinsheng   the first version
  * 2025-9-07     zhuqinsheng   将擦除和写入分开
  */
-#ifndef UL_W25QXX_H
-#define UL_W25QXX_H
+#ifndef _UL_W25QXX_H
+#define _UL_W25QXX_H
 
 #include "ul_config.h"
 

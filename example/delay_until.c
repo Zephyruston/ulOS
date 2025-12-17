@@ -1,4 +1,4 @@
-#include "ulOS_thread.h"
+#include "ul_thread.h"
 
 static ul_thread_t *thread1;
 static ul_thread_t *thread2;

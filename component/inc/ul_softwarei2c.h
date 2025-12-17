@@ -1,11 +1,15 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *_
  * Change Logs:
  * Date           Author       Notes
  * 2025-8-11     zhuqinsheng   the first version
  * 2025-8-22     zhuqinsheng   修复了一些通信时序问题
  */
-#ifndef UL_SOFTWAREIIC_H
-#define UL_SOFTWAREIIC_H
+#ifndef _UL_SOFTWAREIIC_H
+#define _UL_SOFTWAREIIC_H
 
 #include "ul_config.h"
 

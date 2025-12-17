@@ -1,11 +1,15 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2025-9-07     zhuqinsheng   the first version, modify from 
  *                             https://github.com/whik/crc-lib-c/blob/master/crcLib.c
  */
-#ifndef UL_CRC_H
-#define UL_CRC_H
+#ifndef _UL_CRC_H
+#define _UL_CRC_H
 
 #include "ul_config.h"
 

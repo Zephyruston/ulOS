@@ -1,4 +1,8 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2025-8-13     zhuqinsheng   the first version
@@ -31,7 +35,7 @@ void ul_swtimer_handler(void)
         {
             if (now_swtimer->type & UL_SWTIMER_TYPE_ONE_SHOT)
             {
-                ul_list_remove(&now_swtimer->node); // 从链表移除，也就不会继续调度
+                ul_list_del_init(&now_swtimer->node); // 从链表移除，也就不会继续调度
             }
             if(now_swtimer->entry == NULL)
             {
@@ -75,7 +79,7 @@ void ul_swtimer_tick_callback(ul_uint8_t period)
                 {
                     if (now_swtimer->type & UL_SWTIMER_TYPE_ONE_SHOT)
                     {
-                        ul_list_remove(&now_swtimer->node); // 从链表移除，也就不会继续调度
+                        ul_list_del_init(&now_swtimer->node); // 从链表移除，也就不会继续调度
                     }
                     if(now_swtimer->entry == NULL)
                     {
@@ -173,7 +177,7 @@ ul_ecode ul_swtimer_delete(ul_swtimer_t * self)
     }
 
     /* 从button链表移除 */
-    ul_list_remove(&self->node);
+    ul_list_del_init(&self->node);
     
     if (self->type & UL_SWTIMER_TYPE_DYNAMIC)    // 动态创建的还要释放内存
     {
@@ -190,7 +194,7 @@ ul_ecode ul_swtimer_delete(ul_swtimer_t * self)
  */
 ul_ecode ul_swtimer_start(ul_swtimer_t * self)
 {
-    if (ul_list_isempty(&self->node))    // 如果软件定时器已经开启了，不能重复开启
+    if (ul_list_is_empty(&self->node))    // 如果软件定时器已经开启了，不能重复开启
     {
         /* 对象节点插入链表最后 */
         ul_list_insert_before(&swtimer_list_head_node, &self->node);
@@ -206,11 +210,11 @@ ul_ecode ul_swtimer_start(ul_swtimer_t * self)
  */
 ul_ecode ul_swtimer_stop(ul_swtimer_t * self)
 {
-    if (ul_list_isempty(&self->node))    // 如果软件定时器已经开启了，不能重复开启
+    if (ul_list_is_empty(&self->node))    // 如果软件定时器已经开启了，不能重复开启
     {
         return UL_ERROR;
     }
-    ul_list_remove(&self->node);
+    ul_list_del_init(&self->node);
     return UL_EOK;
 }
 

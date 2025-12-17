@@ -1,4 +1,8 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2025-11-02     zhuqinsheng   the first version
@@ -138,7 +142,7 @@ ul_ecode ul_topic_unsubscribe(ul_topic_subscriber_t* self)
     }
 
     // 从事件订阅列表中移除
-    ul_list_remove(&self->priv.node);
+    ul_list_del_init(&self->priv.node);
 
     // 释放订阅者对象
     ul_free(self);
@@ -171,7 +175,7 @@ void ul_topic_cleanup_subscriptions(const char* topic_name)
         subscriber = ul_list_entry(pos, ul_topic_subscriber_t, priv.node);
         
         // 从订阅列表中移除
-        ul_list_remove(&subscriber->priv.node);
+        ul_list_del_init(&subscriber->priv.node);
         
         // 释放订阅者对象
         ul_free(subscriber);
@@ -273,7 +277,7 @@ ul_ecode ul_topic_delete(const char* topic_name)
     ul_list_for_each_safe(pos, tmp, &topic->priv.subscribers)
     {
         subscriber = ul_list_entry(pos, ul_topic_subscriber_t, priv.node);
-        ul_list_remove(&subscriber->priv.node);
+        ul_list_del_init(&subscriber->priv.node);
         ul_free(subscriber);
     }
 
@@ -341,7 +345,7 @@ ul_ecode ul_topic_list(ul_output_func_t kprtinf)
                 (g_topicpool_mask & (1 << i)) != 0 ? "Published" : "Unknown");
 
         // 检查是否有订阅者
-        if (!ul_list_isempty(&topic->priv.subscribers))
+        if (!ul_list_is_empty(&topic->priv.subscribers))
         {
             ul_list_t *sub_pos;
             ul_topic_subscriber_t *subscriber;

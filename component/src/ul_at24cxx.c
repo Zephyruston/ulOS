@@ -1,4 +1,8 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2025-8-11     zhuqinsheng   the first version
@@ -92,7 +96,7 @@ ul_ecode ul_at24cxx_write(ul_dev_at24cxx_t *self, ul_uint16_t memaddr, ul_uint8_
         datalen -= selectPage_rest;
         pdata   += selectPage_rest;
         
-        rt_thread_mdelay(5);
+        self->delay_ms(5);
         
         /*! 2 write nextPage full */
         int fullPage = datalen/self->page_size;
@@ -107,7 +111,7 @@ ul_ecode ul_at24cxx_write(ul_dev_at24cxx_t *self, ul_uint16_t memaddr, ul_uint8_
                 return UL_ERROR;
             }
             
-            rt_thread_mdelay(5);
+            self->delay_ms(5);
             
             memaddr += self->page_size;
             datalen -= self->page_size;

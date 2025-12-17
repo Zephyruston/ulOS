@@ -1,5 +1,5 @@
-#include "ulOS_thread.h"
-#include "ulOS_mutex.h"
+#include "ul_thread.h"
+#include "ul_mutex.h"
 
 #define USE_CRITICAL_SECTION    2
 

@@ -1,4 +1,8 @@
 /**
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *_
  * @file ul_topic.h
  * @brief ÊÂ¼þÇý¶¯¿ò¼Ü
  * 
@@ -60,8 +64,8 @@
  * Date           Author       Notes
  * 2025-11-02     zhuqinsheng   the first version
  */
-#ifndef UL_TOPIC_H
-#define UL_TOPIC_H
+#ifndef _UL_TOPIC_H
+#define _UL_TOPIC_H
 
 #include "ul_object.h"
 

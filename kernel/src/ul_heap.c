@@ -1,4 +1,8 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2025-11-03     zhuqinsheng   the first version
@@ -378,78 +382,78 @@ ul_uint32_t ul_heap_get_alloc_fail_count(void)
  * - 空闲链表结构
  * - 统计信息（分配次数、释放次数、失败次数）
  */
-void ul_heap_print(void)
-{
-    CHECK_HEAP_IS_INITIALIZED();
+//void ul_heap_print(void)
+//{
+//    CHECK_HEAP_IS_INITIALIZED();
 
-    printf("\r\n=== Heap Status ===\r\n");
-    ul_size_t total = g_heap_manager.total_size;
-    ul_size_t used = g_heap_manager.used_size;
-    ul_size_t free = total - used;
-    ul_size_t max_used = g_heap_manager.max_used_size;
+//    printf("\r\n=== Heap Status ===\r\n");
+//    ul_size_t total = g_heap_manager.total_size;
+//    ul_size_t used = g_heap_manager.used_size;
+//    ul_size_t free = total - used;
+//    ul_size_t max_used = g_heap_manager.max_used_size;
 
-    printf("Total: %zu bytes\r\n", total);
-    printf("Used: %zu bytes (%.1f%%)\r\n", used, (float)used * 100 / total);
-    printf("Free: %zu bytes (%.1f%%)\r\n", free, (float)free * 100 / total);
-    printf("Max Used: %zu bytes (%.1f%%)\r\n", max_used, (float)max_used * 100 / total);
+//    printf("Total: %zu bytes\r\n", total);
+//    printf("Used: %zu bytes (%.1f%%)\r\n", used, (float)used * 100 / total);
+//    printf("Free: %zu bytes (%.1f%%)\r\n", free, (float)free * 100 / total);
+//    printf("Max Used: %zu bytes (%.1f%%)\r\n", max_used, (float)max_used * 100 / total);
 
-    printf("\r\n============= Heap Blocks =============\r\n");
-    printf("Address\t\tSize\t\tPercent\tStatus\r\n");
-    printf("--------\t----\t\t-------\t------\r\n");
+//    printf("\r\n============= Heap Blocks =============\r\n");
+//    printf("Address\t\tSize\t\tPercent\tStatus\r\n");
+//    printf("--------\t----\t\t-------\t------\r\n");
 
-    uint8_t *current = g_heap_manager.start_addr;
-    uint8_t *end = g_heap_manager.end_addr;
-    ul_memblock_t *free_block = g_heap_manager.free_list;
+//    uint8_t *current = g_heap_manager.start_addr;
+//    uint8_t *end = g_heap_manager.end_addr;
+//    ul_memblock_t *free_block = g_heap_manager.free_list;
 
-    while (current < end)
-    {
-        ul_memblock_t *block = (ul_memblock_t *)current;
+//    while (current < end)
+//    {
+//        ul_memblock_t *block = (ul_memblock_t *)current;
 
-        // 检查当前块是否在空闲链表中
-        int is_free = 0;
-        ul_memblock_t *temp = free_block;
+//        // 检查当前块是否在空闲链表中
+//        int is_free = 0;
+//        ul_memblock_t *temp = free_block;
 
-        while (temp != UL_NULL)
-        {
-            if (temp == block)
-            {
-                is_free = 1;
-                break;
-            }
+//        while (temp != UL_NULL)
+//        {
+//            if (temp == block)
+//            {
+//                is_free = 1;
+//                break;
+//            }
 
-            temp = temp->next;
-        }
+//            temp = temp->next;
+//        }
 
-        // 打印块信息
-        printf("0x%08X\t%zu\t\t%.1f%%\t%s\r\n",
-               (uint32_t)current,
-               block->size,
-               (float)block->size * 100 / total,
-               is_free ? "FREE" : "USED");
+//        // 打印块信息
+//        printf("0x%08X\t%zu\t\t%.1f%%\t%s\r\n",
+//               (uint32_t)current,
+//               block->size,
+//               (float)block->size * 100 / total,
+//               is_free ? "FREE" : "USED");
 
-        // 移动到下一个块
-        current += block->size;
-    }
+//        // 移动到下一个块
+//        current += block->size;
+//    }
 
-    printf("\r\n=============== Free Blocks List ===============\r\n");
-    printf("Address\t\tSize\t\tPercent\tNext\r\n");
-    printf("--------\t----\t\t-------\t----\r\n");
+//    printf("\r\n=============== Free Blocks List ===============\r\n");
+//    printf("Address\t\tSize\t\tPercent\tNext\r\n");
+//    printf("--------\t----\t\t-------\t----\r\n");
 
-    free_block = g_heap_manager.free_list;
+//    free_block = g_heap_manager.free_list;
 
-    while (free_block != UL_NULL)
-    {
-        printf("0x%08X\t%zu\t\t%.1f%%\t0x%08X\r\n",
-               (uint32_t)free_block,
-               free_block->size,
-               (float)free_block->size * 100 / total,
-               free_block->next ? (uint32_t)free_block->next : 0);
-        free_block = free_block->next;
-    }
+//    while (free_block != UL_NULL)
+//    {
+//        printf("0x%08X\t%zu\t\t%.1f%%\t0x%08X\r\n",
+//               (uint32_t)free_block,
+//               free_block->size,
+//               (float)free_block->size * 100 / total,
+//               free_block->next ? (uint32_t)free_block->next : 0);
+//        free_block = free_block->next;
+//    }
 
-    printf("\r\n=== Statistics ===\r\n");
-    printf("Alloc: %u, Free: %u, Fail: %u\r\n",
-           g_heap_manager.alloc_count,
-           g_heap_manager.free_count,
-           g_heap_manager.alloc_fail_count);
-}
+//    printf("\r\n=== Statistics ===\r\n");
+//    printf("Alloc: %u, Free: %u, Fail: %u\r\n",
+//           g_heap_manager.alloc_count,
+//           g_heap_manager.free_count,
+//           g_heap_manager.alloc_fail_count);
+//}

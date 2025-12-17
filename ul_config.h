@@ -36,10 +36,10 @@ extern "C" {
 #define ULOS_CONFIG_SCHED_ALG_FFS     ( 1 )
 
 /* Memory Configuration */
-#define UL_HEAP_SIZE                  ((ul_size_t)(1024 * 10))
+#define UL_HEAP_SIZE                  ((ul_size_t)(1024 * 5))
 
 /* Assert Configuration */
-#define ULOS_CONFIG_USE_ASSERT       ( 1 )
+#define ULOS_CONFIG_USE_ASSERT       ( 0 )
 
 #ifdef __cplusplus
 }

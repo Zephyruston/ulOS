@@ -1,10 +1,14 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2025-12-4     zhuqinsheng   the first version
  */
-#ifndef ULOS_IPC_H
-#define ULOS_IPC_H
+#ifndef _UL_IPC_H
+#define _UL_IPC_H
 
 #include "ul_object.h"
 

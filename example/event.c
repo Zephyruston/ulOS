@@ -1,8 +1,8 @@
 #include "ulOS_example.h"
 #if (ULOS_CONFIG_USE_EVENT != 0)
 
-#include "ulOS_thread.h"
-#include "ulOS_ipc.h"
+#include "ul_thread.h"
+#include "ul_ipc.h"
 
 #define THREAD_PRIORITY      2
 #define THREAD_STACK_SIZE    512
@@ -65,7 +65,6 @@ static void thread2_send_event(void *param)
 
 int example_event(void)
 {
-    ul_ecode result;
     struct ul_thread *thread1, *thread2;
 
     /* 创建事件对象 */

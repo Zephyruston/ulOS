@@ -1,11 +1,15 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2025-8-13     zhuqinsheng   the first version
  * 2025-11-25    zhuqinsheng     ≈‰ulOS
  */
-#ifndef UL_SWTIMER_H
-#define UL_SWTIMER_H
+#ifndef _UL_SWTIMER_H
+#define _UL_SWTIMER_H
 
 #include "ul_config.h"
 #include "ul_object.h"

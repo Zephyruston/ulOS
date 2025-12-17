@@ -1,10 +1,14 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *_
  * Change Logs:
  * Date           Author       Notes
  * 2025-8-21     zhuqinsheng   the first version
  */
-#ifndef UL_MAX6675_H
-#define UL_MAX6675_H
+#ifndef _UL_MAX6675_H
+#define _UL_MAX6675_H
 
 #include "ul_config.h"
 

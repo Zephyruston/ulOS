@@ -1,5 +1,5 @@
-#ifndef ULOS_EXAMPLE_H
-#define ULOS_EXAMPLE_H
+#ifndef _UL_EXAMPLE_H
+#define _UL_EXAMPLE_H
 
 #include "ul_config.h"
 

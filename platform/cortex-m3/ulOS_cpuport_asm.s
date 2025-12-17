@@ -1,5 +1,6 @@
 ;/**
 ; * @addtogroup CORTEX-M3
+; * modify from RT-Thread
 ; * @{
 ; */
 
