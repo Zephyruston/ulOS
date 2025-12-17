@@ -36,11 +36,11 @@ static void ul_timer_insert_sorted(ul_timer_t *timer)
 
     // !!!一定要先把自己移除，
     // 否则在下方标记处会存在自己插自己屁股后面的问题，导致链表断掉
-    ul_list_remove(&timer->node);
+    ul_list_del_init(&timer->node);
 
 
     /* 如果链表为空，直接插入 */
-    if (ul_list_isempty(&ul_timer_list))
+    if (ul_list_is_empty(&ul_timer_list))
     {
         ul_list_insert_before(&ul_timer_list, &timer->node);
         return;
@@ -77,7 +77,7 @@ static void timer_thread_entry(void *parameter)
         /* 获取下一个要触发的定时器时间 */
         next_expire_time = ULOS_MAX_TICK;
 
-        if (!ul_list_isempty(&ul_timer_list))
+        if (!ul_list_is_empty(&ul_timer_list))
         {
             ul_timer_t *timer = ul_list_entry(ul_timer_list.next, ul_timer_t, node);
             next_expire_time = timer->timeout_tick - ulOS_get_tick();
@@ -116,7 +116,7 @@ static void ul_timer_process_cmd(ul_timer_msg_t *msg)
     case ULOS_TIMER_CMD_START:
         if (timer->stat == ULOS_TIMER_STAT_STARTED)
         {
-            ul_list_remove(&timer->node);
+            ul_list_del_init(&timer->node);
         }
 
         timer->timeout_tick = msg->timeout;
@@ -128,7 +128,7 @@ static void ul_timer_process_cmd(ul_timer_msg_t *msg)
     case ULOS_TIMER_CMD_STOP:
         if (timer->stat == ULOS_TIMER_STAT_STARTED)
         {
-            ul_list_remove(&timer->node);
+            ul_list_del_init(&timer->node);
             timer->stat = ULOS_TIMER_STAT_STOPPED;
         }
 
@@ -137,7 +137,7 @@ static void ul_timer_process_cmd(ul_timer_msg_t *msg)
     case ULOS_TIMER_CMD_RESET:
         if (timer->stat == ULOS_TIMER_STAT_STARTED)
         {
-            ul_list_remove(&timer->node);
+            ul_list_del_init(&timer->node);
             timer->timeout_tick = msg->timeout;
             /* 使用排序插入 */
             ul_timer_insert_sorted(timer);
@@ -150,7 +150,7 @@ static void ul_timer_process_cmd(ul_timer_msg_t *msg)
 
         if (timer->stat == ULOS_TIMER_STAT_STARTED)
         {
-            ul_list_remove(&timer->node);
+            ul_list_del_init(&timer->node);
             timer->timeout_tick = ulOS_get_tick() + timer->init_tick;
             /* 使用排序插入 */
             ul_timer_insert_sorted(timer);
@@ -161,7 +161,7 @@ static void ul_timer_process_cmd(ul_timer_msg_t *msg)
     case ULOS_TIMER_CMD_DELETE:
         if (timer->stat == ULOS_TIMER_STAT_STARTED)
         {
-            ul_list_remove(&timer->node);
+            ul_list_del_init(&timer->node);
         }
 
         ul_free(timer);
@@ -210,7 +210,7 @@ static void ul_timer_process_expired(void)
         else
         {
             /* 单次定时器，停止 */
-            ul_list_remove(&timer->node);
+            ul_list_del_init(&timer->node);
             timer->stat = ULOS_TIMER_STAT_STOPPED;
         }
     }

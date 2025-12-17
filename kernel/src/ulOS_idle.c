@@ -53,7 +53,7 @@ static void idle_thread_entry(void *p)
             struct ul_thread *thread = ul_list_entry(ul_defunct_thread_list.next,
                                         struct ul_thread,
                                         tlist);
-            ul_list_remove(&thread->tlist);
+            ul_list_del_init(&thread->tlist);
             ul_object_unregister(&thread->parent);
             ul_free(thread->stack_start);
             ul_free(thread);
