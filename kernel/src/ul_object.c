@@ -7,7 +7,6 @@
 #include "ul_object.h"
 #include "ul_libc.h"
 /* Static global object list */
-//static ul_list_t g_object_list = UL_LIST_HEAD_INIT(g_object_list);
 
 struct ul_object_info
 {
@@ -55,7 +54,7 @@ ul_ecode ul_object_init(const char* name, ul_object_t* object, ul_object_class_t
     }
 
     /* Check name length */
-    if (strlen(name) >= sizeof(object->name))
+    if (ul_strlen(name) >= sizeof(object->name))
     {
         return UL_ERROR;
     }
@@ -69,7 +68,7 @@ ul_ecode ul_object_init(const char* name, ul_object_t* object, ul_object_class_t
     object->type = type;
     
     /* Set object properties */
-    strncpy(object->name, name, sizeof(object->name) - 1);
+    ul_strncpy(object->name, name, sizeof(object->name) - 1);
     object->name[sizeof(object->name) - 1] = '\0'; /* Ensure string termination */
 
     /* Initialize list node */
@@ -98,7 +97,7 @@ ul_ecode ul_object_unregister(ul_object_t* object)
         return UL_ERROR; /* Object not registered */
     }
 
-    ul_list_remove(&object->node);
+    ul_list_del_init(&object->node);
 
     /* Clear object name (optional, for security) */
     object->name[0] = '\0';

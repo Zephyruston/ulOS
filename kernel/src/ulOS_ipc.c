@@ -4,7 +4,9 @@
  * 2025-12-4     zhuqinsheng   the first version
  */
 #include "ulOS_ipc.h"
+#include "ul_libc.h"
 #include "ulOS_thread.h"
+#include "ulOS_debug.h"
 
 extern ul_base_t ul_hw_interrupt_disable(void);
 extern void ul_hw_interrupt_enable(ul_base_t level);
@@ -17,13 +19,13 @@ static void _ipc_wakeup_first_receiver(ul_ipc_object_t *ipc, ul_thread_t *sender
 {
     ul_thread_t *thread;
     
-    if (!ul_list_isempty(&ipc->suspend_thread_list))
+    if (!ul_list_is_empty(&ipc->suspend_thread_list))
     {
         /* 获取最高优先级的等待线程 */
         thread = ul_list_entry(ipc->suspend_thread_list.next,
                               ul_thread_t,
                               ipc_list);
-        ul_list_remove(&thread->ipc_list);
+        ul_list_del_init(&thread->ipc_list);
         
         /* 恢复到就绪列表 */
         _thread_insert_ready_list(thread);
@@ -117,12 +119,12 @@ ul_ecode ul_queue_delete(ul_queue_t *queue)
     level = ul_hw_interrupt_disable();
     
     /* 唤醒所有等待的接收线程 */
-    while (!ul_list_isempty(&queue->parent.suspend_thread_list))
+    while (!ul_list_is_empty(&queue->parent.suspend_thread_list))
     {
         thread = ul_list_entry(queue->parent.suspend_thread_list.next,
                               ul_thread_t,
                               ipc_list);
-        ul_list_remove(&thread->ipc_list);
+        ul_list_del_init(&thread->ipc_list);
         
         /* 设置错误码并恢复线程 */
         _thread_insert_ready_list(thread);
@@ -186,7 +188,7 @@ ul_ecode ul_queue_send(ul_queue_t *queue,
     }
 
     /* 复制数据到队列 */
-    memcpy((uint8_t *)queue->buffer + queue->tail * queue->msg_size,
+    ul_memcpy((uint8_t *)queue->buffer + queue->tail * queue->msg_size,
            buffer,
            len);
 
@@ -245,7 +247,7 @@ ul_ecode ul_queue_send_urgent(ul_queue_t *queue,
     queue->head = (queue->head - 1 + queue->capacity) % queue->capacity;
     
     /* 复制数据到队列头部 */
-    memcpy((uint8_t *)queue->buffer + queue->head * queue->msg_size,
+    ul_memcpy((uint8_t *)queue->buffer + queue->head * queue->msg_size,
            buffer,
            len);
 
@@ -327,7 +329,7 @@ ul_ecode ul_queue_receive(ul_queue_t *queue,
     }
 
     /* 从队列复制数据 */
-    memcpy(buffer,
+    ul_memcpy(buffer,
            (uint8_t *)queue->buffer + queue->head * queue->msg_size,
            len);
 
@@ -415,12 +417,12 @@ ul_ecode ul_sem_delete(ul_sem_t *self)
     level = ul_hw_interrupt_disable();
     
     /* 唤醒所有等待的接收线程 */
-    while (!ul_list_isempty(&self->parent.suspend_thread_list))
+    while (!ul_list_is_empty(&self->parent.suspend_thread_list))
     {
         thread = ul_list_entry(self->parent.suspend_thread_list.next,
                               ul_thread_t,
                               ipc_list);
-        ul_list_remove(&thread->ipc_list);
+        ul_list_del_init(&thread->ipc_list);
         
         /* 设置错误码并恢复线程 */
         _thread_insert_ready_list(thread);
@@ -591,12 +593,12 @@ ul_ecode ul_event_delete(struct ul_event *event)
     level = ul_hw_interrupt_disable();
 
     /* 唤醒所有等待的线程 */
-    while (!ul_list_isempty(&event->parent.suspend_thread_list))
+    while (!ul_list_is_empty(&event->parent.suspend_thread_list))
     {
         thread = ul_list_entry(event->parent.suspend_thread_list.next,
                               ul_thread_t,
                               ipc_list);
-        ul_list_remove(&thread->ipc_list);
+        ul_list_del_init(&thread->ipc_list);
 
         _thread_insert_ready_list(thread);
     }
@@ -615,14 +617,12 @@ ul_ecode ul_event_send(struct ul_event *event,
 {
     ul_thread_t *thread;
     uint32_t level;
-    uint32_t original_event;
     ul_list_t *node;
     ul_list_t *next;
 
     UL_ASSERT(event != NULL);
 
     level = ul_hw_interrupt_disable();
-    original_event = event->event_set;
     event->event_set |= set;
 
     /* 遍历所有等待的线程 */
@@ -634,7 +634,7 @@ ul_ecode ul_event_send(struct ul_event *event,
         if (_thread_event_check(thread, event->event_set))
         {
             /* 从等待列表移除 */
-            ul_list_remove(&thread->ipc_list);
+            ul_list_del_init(&thread->ipc_list);
             
             /* 唤醒线程 */
 
@@ -655,7 +655,6 @@ ul_ecode ul_event_recv(struct ul_event *event,
 {
     ul_thread_t *current_thread;
     uint32_t level;
-    ul_ecode ret;
 
     UL_ASSERT(event != NULL);
 

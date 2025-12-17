@@ -61,8 +61,8 @@ extern ul_list_t ul_defunct_thread_list;
 static void thread_exit_entry(void)
 {
     // 从就绪队列和IPC队列中移除
-    ul_list_remove(&ul_current_thread->tlist);
-    ul_list_remove(&ul_current_thread->ipc_list);
+    ul_list_del_init(&ul_current_thread->tlist);
+    ul_list_del_init(&ul_current_thread->ipc_list);
 
     // 加入到待删除线程列表
     ul_list_insert_before(&ul_defunct_thread_list, &ul_current_thread->tlist);
@@ -164,8 +164,8 @@ void ul_thread_delete(ul_thread_t *thread)
     }
 
     // 从队列中移除
-    ul_list_remove(&thread->tlist);
-    ul_list_remove(&thread->ipc_list);
+    ul_list_del_init(&thread->tlist);
+    ul_list_del_init(&thread->ipc_list);
 
     // 加入待删除列表
     ul_list_insert_before(&ul_defunct_thread_list, &thread->tlist);
@@ -260,7 +260,7 @@ static ul_uint8_t ul_find_highest_priority(void)
     // 从最高优先级(0)开始查找
     for (ul_uint8_t priority = 0; priority < ULOS_CONFIG_MAX_PRIORITY; priority++)
     {
-        if (!ul_list_isempty(&ul_ready_thread_list[priority]))
+        if (!ul_list_is_empty(&ul_ready_thread_list[priority]))
         {
             return priority;
         }
@@ -275,9 +275,9 @@ static ul_uint8_t ul_find_highest_priority(void)
 void _thread_insert_ready_list(struct ul_thread *thread)
 {
     // 确保线程已从原队列移除
-    if (!ul_list_isempty(&thread->tlist))
+    if (!ul_list_is_empty(&thread->tlist))
     {
-        ul_list_remove(&thread->tlist);
+        ul_list_del_init(&thread->tlist);
     }
 
     // 插入对应优先级队列
@@ -307,13 +307,13 @@ void _thread_insert_ready_list(struct ul_thread *thread)
 void _thread_remove_ready_list(struct ul_thread *thread)
 {
     ul_uint8_t priority = thread->current_priority;
-    ul_list_remove(&thread->tlist);
+    ul_list_del_init(&thread->tlist);
     thread->state &= (~UL_THREAD_STATE_READY);
 
 #if (ULOS_CONFIG_SCHED_ALG_FFS == 1)
 
     /* ---------- FFS位图算法 ---------- */
-    if (ul_list_isempty(&ul_ready_thread_list[priority]))
+    if (ul_list_is_empty(&ul_ready_thread_list[priority]))
     {
         ul_thread_ready_priority_group &= ~(1UL << priority);
     }
@@ -328,7 +328,7 @@ void _thread_remove_ready_list(struct ul_thread *thread)
     /* ---------- 轮询查找算法 ---------- */
     // 只有当移除的线程属于当前记录的最高优先级，且该优先级列表变空时，才需要查找新的最高优先级
     if ((priority == ul_current_highest_priority) &&
-            ul_list_isempty(&ul_ready_thread_list[priority]))
+            ul_list_is_empty(&ul_ready_thread_list[priority]))
     {
         ul_current_highest_priority = ul_find_highest_priority();
     }
@@ -622,12 +622,12 @@ void ul_thread_suspend(struct ul_thread *self)
     // 根据线程状态进行不同处理
     if (self->state & UL_THREAD_STATE_READY)
     {
-        ul_list_remove(&self->tlist);
+        ul_list_del_init(&self->tlist);
         self->state = UL_THREAD_STATE_SUSPEND;
     }
     else if (self->state & UL_THREAD_STATE_BLOCK)
     {
-        ul_list_remove(&self->tlist);
+        ul_list_del_init(&self->tlist);
         self->state = UL_THREAD_STATE_SUSPEND;
         _update_next_wake_time();
     }
@@ -697,7 +697,7 @@ void ul_tick_increase(void)
 
             if (pxTCB->wake_tick <= ulOS_tick)
             {
-                ul_list_remove(&pxTCB->tlist);
+                ul_list_del_init(&pxTCB->tlist);
                 _thread_insert_ready_list(pxTCB);
             }
             else
@@ -707,7 +707,7 @@ void ul_tick_increase(void)
             }
         }
 
-        if (ul_list_isempty(&ul_delay_thread_list))
+        if (ul_list_is_empty(&ul_delay_thread_list))
         {
             ul_next_wake_time = ULOS_MAX_TICK;
         }

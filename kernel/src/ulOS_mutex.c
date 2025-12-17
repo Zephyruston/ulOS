@@ -166,11 +166,11 @@ ul_ecode ul_mutex_unlock(ul_mutex_t *mutex)
     }
 
     // 如果有等待的线程，唤醒最高优先级的线程
-    if (!ul_list_isempty(&mutex->wait_list))
+    if (!ul_list_is_empty(&mutex->wait_list))
     {
         struct ul_thread *next_thread = ul_list_entry(mutex->wait_list.next,
                                         struct ul_thread, ipc_list);
-        ul_list_remove(&next_thread->ipc_list);
+        ul_list_del_init(&next_thread->ipc_list);
         _thread_remove_ready_list(next_thread);
         mutex->owner = next_thread;
         mutex->hold_count = 1;
