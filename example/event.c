@@ -24,10 +24,10 @@ static void thread1_recv_event(void *param)
                       UL_EVENT_FLAG_OR | UL_EVENT_FLAG_CLEAR,
                       ULOS_MAX_DELAY, &e) == UL_EOK)
     {
-        printf("thread1: OR recv event 0x%x\r\n", e);
+        ul_kprintf("thread1: OR recv event 0x%x\r\n", e);
     }
 
-    printf("thread1: delay 1s to prepare the second event\r\n");
+    ul_kprintf("thread1: delay 1s to prepare the second event\r\n");
     ul_thread_delay(1000);
 
     /* 第二次接收事件，事件3和事件5均发生时才可以触发线程1 */
@@ -35,9 +35,9 @@ static void thread1_recv_event(void *param)
                       UL_EVENT_FLAG_AND | UL_EVENT_FLAG_CLEAR,
                       ULOS_MAX_DELAY, &e) == UL_EOK)
     {
-        printf("thread1: AND recv event 0x%x\r\n", e);
+        ul_kprintf("thread1: AND recv event 0x%x\r\n", e);
     }
-    printf("thread1 leave.\r\n");
+    ul_kprintf("thread1 leave.\r\n");
     
     ul_event_delete(event);
     
@@ -47,17 +47,17 @@ static void thread1_recv_event(void *param)
 /* 线程2入口 */
 static void thread2_send_event(void *param)
 {
-    printf("thread2: send event3\r\n");
+    ul_kprintf("thread2: send event3\r\n");
     ul_event_send(event, EVENT_FLAG3);
     ul_thread_delay(200);
 
-    printf("thread2: send event5\r\n");
+    ul_kprintf("thread2: send event5\r\n");
     ul_event_send(event, EVENT_FLAG5);
     ul_thread_delay(200);
 
-    printf("thread2: send event3\r\n");
+    ul_kprintf("thread2: send event3\r\n");
     ul_event_send(event, EVENT_FLAG3);
-    printf("thread2 leave.\r\n");
+    ul_kprintf("thread2 leave.\r\n");
 
     /* 线程退出时删除自己 */  
     return;
@@ -71,7 +71,7 @@ int example_event(void)
     event = ul_event_create("event");
     if (event == NULL)
     {
-        printf("create event failed.\r\n");
+        ul_kprintf("create event failed.\r\n");
         return -1;
     }
 
@@ -84,7 +84,7 @@ int example_event(void)
                              THREAD_TIMESLICE);
     if (thread1 == NULL)
     {
-        printf("create thread1 failed.\r\n");
+        ul_kprintf("create thread1 failed.\r\n");
         ul_event_delete(event);
         return -1;
     }
@@ -99,7 +99,7 @@ int example_event(void)
                              THREAD_TIMESLICE);
     if (thread2 == NULL)
     {
-        printf("create thread2 failed.\r\n");
+        ul_kprintf("create thread2 failed.\r\n");
         ul_thread_delete(thread1);
         ul_event_delete(event);
         return -1;

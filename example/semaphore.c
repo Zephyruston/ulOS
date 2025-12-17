@@ -3,7 +3,6 @@
 
 #include "ul_thread.h"
 #include "ul_ipc.h"
-
 /* 指向信号量的指针 */
 ul_sem_t *dynamic_sem = UL_NULL;
 
@@ -28,7 +27,7 @@ static void _thread1_entry(void *parameter)
         {
             ul_sem_give(dynamic_sem);   
             ul_enter_critical();
-            printf("t1 release a dynamic semaphore.\r\n" ); 
+            ul_kprintf("t1 release a dynamic semaphore.\r\n" ); 
             ul_exit_critical();
         }
     }
@@ -47,14 +46,14 @@ static void _thread2_entry(void *parameter)
         ul_enter_critical();
         if (result != UL_EOK)
         {        
-            printf("t2 take a dynamic semaphore, failed.\r\n");
+            ul_kprintf("t2 take a dynamic semaphore, failed.\r\n");
             ul_sem_delete(dynamic_sem);
             return;
         }
         else
         {      
             number++;             
-            printf("t2 take a dynamic semaphore. number = %d\r\n" ,number);                        
+            ul_kprintf("t2 take a dynamic semaphore. number = %d\r\n" ,number);                        
         }
         ul_exit_critical();
     }   
@@ -68,12 +67,12 @@ void example_semaphore(void)
     dynamic_sem = ul_sem_create("dsem", 0);
     if (dynamic_sem == UL_NULL)
     {
-        printf("create dynamic semaphore failed.\r\n");
+        ul_kprintf("create dynamic semaphore failed.\r\n");
         return;
     }
     else
     {
-        printf("create done. dynamic semaphore value = 0.\r\n");
+        ul_kprintf("create done. dynamic semaphore value = 0.\r\n");
     }
 
     sem_thread1 = ul_thread_create("sem_t1",

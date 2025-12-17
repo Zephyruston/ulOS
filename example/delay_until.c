@@ -1,5 +1,5 @@
 #include "ul_thread.h"
-
+#include "ulos_example.h"
 static ul_thread_t *thread1;
 static ul_thread_t *thread2;
 
@@ -10,7 +10,7 @@ static void thread1_entry(void *parameter)
     
     while(j < 10)
     {
-        printf("[1]delay_thread running...ulOS tick:%d\r\n", (int)ulOS_get_tick());
+        ul_kprintf("[1]delay_thread running...ulOS tick:%d\r\n", (int)ulOS_get_tick());
         
         for(i = 0; i < 100000; i++);    // 模拟运行耗时
         
@@ -19,7 +19,7 @@ static void thread1_entry(void *parameter)
         j++;
     }
     
-    printf("[1]delay_thread delete...\r\n");
+    ul_kprintf("[1]delay_thread delete...\r\n");
     return;
 }
 
@@ -32,7 +32,7 @@ static void thread2_entry(void *parameter)
     
     while(j < 10)
     {
-        printf("[2]delay_until_thread running...ulOS tick:%d\r\n", (int)ulOS_get_tick());
+        ul_kprintf("[2]delay_until_thread running...ulOS tick:%d\r\n", (int)ulOS_get_tick());
         
         for(i = 0; i < 100000; i++);    // 模拟运行耗时
         
@@ -41,7 +41,7 @@ static void thread2_entry(void *parameter)
         j++;
     }   
     
-    printf("[2]delay_until_thread delete...\r\n");
+    ul_kprintf("[2]delay_until_thread delete...\r\n");
     return;
 }
 

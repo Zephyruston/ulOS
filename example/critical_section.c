@@ -1,6 +1,6 @@
 #include "ul_thread.h"
 #include "ul_mutex.h"
-
+#include "ulos_example.h"
 #define USE_CRITICAL_SECTION    2
 
 uint32_t shared_counter = 0;
