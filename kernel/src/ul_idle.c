@@ -1,4 +1,14 @@
-#include "ulOS_thread.h"
+/*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2025-12-7      zhuqinsheng   the first version
+ */
+ 
+#include "ul_thread.h"
 
 static struct ul_thread *idle_thread_handle;
 ul_list_t ul_defunct_thread_list = UL_LIST_HEAD_INIT(ul_defunct_thread_list);

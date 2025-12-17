@@ -1,6 +1,6 @@
 
-#include "ulOS_thread.h"
-#include "ulOS_mutex.h"
+#include "ul_thread.h"
+#include "ul_mutex.h"
 
 /* 定义三个任务，优先级从高到低 */
 #define HIGH_PRIORITY     0

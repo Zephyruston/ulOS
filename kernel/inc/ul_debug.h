@@ -1,10 +1,14 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2025-12-10     zhuqinsheng  the first version
  */
-#ifndef ULOS_DEBUG_H
-#define ULOS_DEBUG_H
+#ifndef _UL_DEBUG_H
+#define _UL_DEBUG_H
 
 #include "ul_config.h"
 
@@ -18,8 +22,11 @@ if (!(EX))                                                                    \
 {                                                                             \
     ul_assert_handler(#EX, __FILE__, __LINE__);                           \
 } 
+
+#define ul_kprintf(format, ...) printf(format, ...)
 #else
 #define UL_ASSERT(x)   
+#define ul_kprintf(format, ...)
 #endif
 
 void ul_assert_handler(const char *expr, const char *func, int line);

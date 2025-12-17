@@ -1,10 +1,14 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2025-12-7     zhuqinsheng   the first version
  */
-#ifndef ULOS_TIMER_H
-#define ULOS_TIMER_H
+#ifndef _UL_TIMER_H
+#define _UL_TIMER_H
 
 #include "ul_object.h"
 

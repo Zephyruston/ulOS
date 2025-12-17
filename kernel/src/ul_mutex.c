@@ -1,5 +1,14 @@
-#include "ulOS_mutex.h"
-#include "ulOS_thread.h"
+/*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2025-12-4     zhuqinsheng   the first version
+ */
+#include "ul_mutex.h"
+#include "ul_thread.h"
 
 extern void _thread_insert_ready_list(struct ul_thread *thread);
 extern void _thread_remove_ready_list(struct ul_thread *thread);

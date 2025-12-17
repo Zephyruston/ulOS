@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005 ulOS Development Team
+ * Copyright (c) 2025 ulOS Community
  *
  * SPDX-License-Identifier: GPL-2.0-or-late
  *

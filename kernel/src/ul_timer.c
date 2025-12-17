@@ -1,12 +1,15 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2025-12-7     zhuqinsheng   the first version
  */
-
-#include "ulOS_timer.h"
-#include "ulOS_ipc.h"
-#include "ulOS_thread.h"
+#include "ul_timer.h"
+#include "ul_ipc.h"
+#include "ul_thread.h"
 
 /* 定时器命令消息 */
 typedef struct

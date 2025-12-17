@@ -1,14 +1,17 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2025-12-4     zhuqinsheng   the first version
  * 2025-12-12    zhuqinsheng   优化调度算法
  */
-
-#include "ulOS_thread.h"
+#include "ul_thread.h"
 #include "ul_libc.h"
-#include "ulOS_idle.h"
-#include "ulOS_debug.h"
+#include "ul_idle.h"
+#include "ul_debug.h"
 
 /* ==================== 全局变量定义 ==================== */
 static volatile ul_tick_t ulOS_tick = 0;                    // 系统时钟计数

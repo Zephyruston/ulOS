@@ -1,5 +1,10 @@
 /**
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *
  * 不与ulOS强绑定，可单独作为模块使用
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2025-11-03     zhuqinsheng   the first version

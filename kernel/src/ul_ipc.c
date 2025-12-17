@@ -1,12 +1,16 @@
 /*
+ * Copyright (c) 2025 ulOS Community
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-late
+ *
  * Change Logs:
  * Date           Author       Notes
  * 2025-12-4     zhuqinsheng   the first version
  */
-#include "ulOS_ipc.h"
+#include "ul_ipc.h"
 #include "ul_libc.h"
-#include "ulOS_thread.h"
-#include "ulOS_debug.h"
+#include "ul_thread.h"
+#include "ul_debug.h"
 
 extern ul_base_t ul_hw_interrupt_disable(void);
 extern void ul_hw_interrupt_enable(ul_base_t level);
