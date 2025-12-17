@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2025-12-10     zhuqinsheng  the first version
+ * 2025-12-17     zhuqinsheng  add ul_kprintf
  */
 #ifndef _UL_DEBUG_H
 #define _UL_DEBUG_H
@@ -22,13 +23,11 @@ if (!(EX))                                                                    \
 {                                                                             \
     ul_assert_handler(#EX, __FILE__, __LINE__);                           \
 } 
-
-#define ul_kprintf(format, ...) printf(format, ...)
 #else
 #define UL_ASSERT(x)   
-#define ul_kprintf(format, ...)
 #endif
 
+void ul_kprintf(const char *fmt, ...);
 void ul_assert_handler(const char *expr, const char *func, int line);
 
 #ifdef __cplusplus
