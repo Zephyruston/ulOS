@@ -46,7 +46,7 @@ const static ul_uint8_t __lowest_bit_bitmap[] =
 
 /* 外部函数声明 */
 extern void ul_hw_context_switch(ul_uint32_t from, ul_uint32_t to);
-extern void ul_hw_context_switch_to(ul_uint32_t to);
+extern void ul_hw_context_switch_first(ul_uint32_t to);
 extern ul_base_t ul_hw_interrupt_disable(void);
 extern void ul_hw_interrupt_enable(ul_base_t level);
 extern ul_uint8_t *ul_hw_stack_init(void *tentry, void *parameter,
@@ -354,7 +354,7 @@ void ul_scheduler_start(void)
     // 启动调度
     ul_hw_interrupt_disable();
     ulOS_start_flag = 1;
-    ul_hw_context_switch_to((ul_uint32_t)&to_thread->stack_top);
+    ul_hw_context_switch_first((ul_uint32_t)&to_thread->stack_top);
 }
 
 /**

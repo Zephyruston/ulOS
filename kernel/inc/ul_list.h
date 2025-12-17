@@ -36,7 +36,7 @@ typedef struct ul_list_node
  * @param head the head of the list
  * @return 1 if first, 0 if not
  */
-static inline int ul_list_is_first(const ul_list_t *list, const ul_list_t *head)
+ul_inline int ul_list_is_first(const ul_list_t *list, const ul_list_t *head)
 {
     return list->prev == head;
 }
@@ -48,7 +48,7 @@ static inline int ul_list_is_first(const ul_list_t *list, const ul_list_t *head)
  * @param head the head of the list
  * @return 1 if last, 0 if not
  */
-static inline int ul_list_is_last(const ul_list_t *list, const ul_list_t *head)
+ul_inline int ul_list_is_last(const ul_list_t *list, const ul_list_t *head)
 {
     return list->next == head;
 }
@@ -70,7 +70,7 @@ ul_inline int ul_list_is_empty(const ul_list_t *l)
  * @param head the head of the list
  * @return 1 if singular, 0 if not
  */
-static inline int ul_list_is_singular(const ul_list_t *head)
+ul_inline int ul_list_is_singular(const ul_list_t *head)
 {
     return !ul_list_is_empty(head) && (head->next == head->prev);
 }
@@ -93,7 +93,7 @@ ul_inline void ul_list_init(ul_list_t *list)
  * @param prev previous node
  * @param next next node
  */
-static inline void __ul_list_add(ul_list_t *new,
+ul_inline void __ul_list_add(ul_list_t *new,
                 ul_list_t *prev,
                 ul_list_t *next)
 {
@@ -109,7 +109,7 @@ static inline void __ul_list_add(ul_list_t *new,
  * @param new new node to be added
  * @param head the head of the list
  */
-static inline void ul_list_add_head(ul_list_t *new, ul_list_t *head)
+ul_inline void ul_list_add_head(ul_list_t *new, ul_list_t *head)
 {
     __ul_list_add(new, head, head->next);
 }
@@ -120,7 +120,7 @@ static inline void ul_list_add_head(ul_list_t *new, ul_list_t *head)
  * @param new new node to be added
  * @param head the head of the list
  */
-static inline void ul_list_add_tail(ul_list_t *new, ul_list_t *head)
+ul_inline void ul_list_add_tail(ul_list_t *new, ul_list_t *head)
 {
     __ul_list_add(new, head->prev, head);
 }
@@ -131,7 +131,7 @@ static inline void ul_list_add_tail(ul_list_t *new, ul_list_t *head)
  * @param prev previous node
  * @param next next node
  */
-static inline void __ul_list_del(ul_list_t *prev, ul_list_t *next)
+ul_inline void __ul_list_del(ul_list_t *prev, ul_list_t *next)
 {
     next->prev = prev;
     prev->next = next;
@@ -142,7 +142,7 @@ static inline void __ul_list_del(ul_list_t *prev, ul_list_t *next)
  *
  * @param entry the entry to delete
  */
-static inline void __ul_list_del_entry(ul_list_t *entry)
+ul_inline void __ul_list_del_entry(ul_list_t *entry)
 {
     __ul_list_del(entry->prev, entry->next);
 }
@@ -152,7 +152,7 @@ static inline void __ul_list_del_entry(ul_list_t *entry)
  *
  * @param entry the entry to delete
  */
-static inline void ul_list_del(ul_list_t *entry)
+ul_inline void ul_list_del(ul_list_t *entry)
 {
     __ul_list_del_entry(entry);
     entry->next = UL_NULL;
@@ -164,7 +164,7 @@ static inline void ul_list_del(ul_list_t *entry)
  *
  * @param entry the entry to delete
  */
-static inline void ul_list_del_init(ul_list_t *entry)
+ul_inline void ul_list_del_init(ul_list_t *entry)
 {
     __ul_list_del_entry(entry);
     ul_list_init(entry);
@@ -176,7 +176,7 @@ static inline void ul_list_del_init(ul_list_t *entry)
  * @param list the entry to move
  * @param head the head that will precede our entry
  */
-static inline void ul_list_move(ul_list_t *list, ul_list_t *head)
+ul_inline void ul_list_move(ul_list_t *list, ul_list_t *head)
 {
     __ul_list_del_entry(list);
     ul_list_add_head(list, head);
@@ -188,7 +188,7 @@ static inline void ul_list_move(ul_list_t *list, ul_list_t *head)
  * @param list the entry to move
  * @param head the head that will follow our entry
  */
-static inline void ul_list_move_tail(ul_list_t *list,
+ul_inline void ul_list_move_tail(ul_list_t *list,
                     ul_list_t *head)
 {
     __ul_list_del_entry(list);
@@ -202,7 +202,7 @@ static inline void ul_list_move_tail(ul_list_t *list,
  * @param first first node in range
  * @param last last node in range
  */
-static inline void ul_list_bulk_move_tail(ul_list_t *head,
+ul_inline void ul_list_bulk_move_tail(ul_list_t *head,
                         ul_list_t *first,
                         ul_list_t *last)
 {
@@ -222,7 +222,7 @@ static inline void ul_list_bulk_move_tail(ul_list_t *head,
  * @param old the node to be replaced
  * @param new the new node
  */
-static inline void ul_list_replace(ul_list_t *old,
+ul_inline void ul_list_replace(ul_list_t *old,
                 ul_list_t *new)
 {
     new->next = old->next;
@@ -237,7 +237,7 @@ static inline void ul_list_replace(ul_list_t *old,
  * @param old the node to be replaced
  * @param new the new node
  */
-static inline void ul_list_replace_init(ul_list_t *old,
+ul_inline void ul_list_replace_init(ul_list_t *old,
                     ul_list_t *new)
 {
     ul_list_replace(old, new);
@@ -250,7 +250,7 @@ static inline void ul_list_replace_init(ul_list_t *old,
  * @param entry1 first entry
  * @param entry2 second entry
  */
-static inline void ul_list_swap(ul_list_t *entry1,
+ul_inline void ul_list_swap(ul_list_t *entry1,
                 ul_list_t *entry2)
 {
     ul_list_t *pos = entry2->prev;
@@ -267,7 +267,7 @@ static inline void ul_list_swap(ul_list_t *entry1,
  *
  * @param head the head of the list
  */
-static inline void ul_list_rotate_left(ul_list_t *head)
+ul_inline void ul_list_rotate_left(ul_list_t *head)
 {
     ul_list_t *first;
 
@@ -283,7 +283,7 @@ static inline void ul_list_rotate_left(ul_list_t *head)
  * @param list the entry to bring to front
  * @param head the head of the list
  */
-static inline void ul_list_rotate_to_front(ul_list_t *list,
+ul_inline void ul_list_rotate_to_front(ul_list_t *list,
                     ul_list_t *head)
 {
     ul_list_move_tail(head, list);
