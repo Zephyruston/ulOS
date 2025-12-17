@@ -1,4 +1,6 @@
-<img src=".\docs\pictures\logo.png" style="zoom:25%;" />
+<p align="center">
+<img src="docs/pictures/logo.png" width="60%" >
+</p>
 
 
 
