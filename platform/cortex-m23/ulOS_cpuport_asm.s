@@ -18,8 +18,10 @@ NVIC_PENDSVSET  EQU     0x10000000               ; value to trigger PendSV excep
     IMPORT ul_interrupt_from_thread_sp
     IMPORT ul_interrupt_to_thread_sp
 
-;/*
-; * ul_base_t ul_hw_interrupt_disable();
+;/**
+; * @brief disable hardware interrupts
+; *
+; * @return current interrupt status
 ; */
 ul_hw_interrupt_disable    PROC
     EXPORT  ul_hw_interrupt_disable
@@ -28,8 +30,10 @@ ul_hw_interrupt_disable    PROC
     BX      LR
     ENDP
 
-;/*
-; * void ul_hw_interrupt_enable(ul_base_t level);
+;/**
+; * @brief enable hardware interrupts
+; *
+; * @param level interrupt status to restore
 ; */
 ul_hw_interrupt_enable    PROC
     EXPORT  ul_hw_interrupt_enable
@@ -37,162 +41,160 @@ ul_hw_interrupt_enable    PROC
     BX      LR
     ENDP
 
-;/*
-; * void ul_hw_context_switch(rt_uint32 from, rt_uint32 to);
-; * r0 --> from
-; * r1 --> to
+;/**
+; * @brief switch context from one thread to another
+; *
+; * @param from source thread stack pointer
+; * @param to destination thread stack pointer
 ; */
 ul_hw_context_switch_interrupt
     EXPORT ul_hw_context_switch_interrupt
 ul_hw_context_switch    PROC
     EXPORT ul_hw_context_switch
 
-    ; 设置任务切换标志
-    LDR     r2, =ul_thread_switch_interrupt_flag  ; 加载切换标志地址到r2
-    LDR     r3, [r2]                               ; 读取当前标志值到r3
-    CMP     r3, #1                                 ; 比较标志是否为1
-    BEQ     _reswitch                              ; 如果已经是1，跳转到_reswitch
-    MOV     r3, #1                                 ; 将r3设为1
-    STR     r3, [r2]                               ; 设置切换标志为1
+    ; set thread switch flag
+    LDR     r2, =ul_thread_switch_interrupt_flag
+    LDR     r3, [r2]
+    CMP     r3, #1
+    BEQ     _reswitch
+    MOV     r3, #1
+    STR     r3, [r2]
 
-    ; 设置源线程
-    LDR     r2, =ul_interrupt_from_thread_sp          ; 加载源线程指针地址
-    STR     r0, [r2]                               ; 存储当前线程指针(r0)到from_thread
+    ; set from thread
+    LDR     r2, =ul_interrupt_from_thread_sp
+    STR     r0, [r2]
 
 _reswitch
-    ; 设置目标线程
-    LDR     r2, =ul_interrupt_to_thread_sp           ; 加载目标线程指针地址
-    STR     r1, [r2]                               ; 存储目标线程指针(r1)到to_thread
+    ; set to thread
+    LDR     r2, =ul_interrupt_to_thread_sp
+    STR     r1, [r2]
 
-    ; 触发PendSV异常（这将导致实际的上下文切换）
-    LDR     r0, =NVIC_INT_CTRL                     ; 加载中断控制状态寄存器地址
-    LDR     r1, =NVIC_PENDSVSET                    ; 加载触发PendSV的值
-    STR     r1, [r0]                               ; 写入以触发PendSV异常
+    ; trigger PendSV exception
+    LDR     r0, =NVIC_INT_CTRL
+    LDR     r1, =NVIC_PENDSVSET
+    STR     r1, [r0]
 
-    BX      LR                                     ; 返回
+    BX      LR
     ENDP
 
-
-; r0 --> switch from thread stack
-; r1 --> switch to thread stack
-; psr, pc, lr, r12, r3, r2, r1, r0 are pushed into [from] stack
+;/**
+; * @brief PendSV exception handler for context switching
+; *
+; * This handler performs the actual context switch between threads.
+; * It saves the current thread's context and restores the new thread's context.
+; */
 PendSV_Handler   PROC
     EXPORT PendSV_Handler
 
-    ; 禁用中断以保护上下文切换过程
-    MRS     r2, PRIMASK              ; 保存当前中断状态到r2
-    CPSID   I                        ; 禁用中断（设置PRIMASK）
+    ; disable interrupts during context switch
+    MRS     r2, PRIMASK
+    CPSID   I
 
-    ; 检查是否需要进行任务切换
-    LDR     r0, =ul_thread_switch_interrupt_flag  ; 加载切换标志地址
-    LDR     r1, [r0]                               ; 读取标志值
+    ; check if context switch is needed
+    LDR     r0, =ul_thread_switch_interrupt_flag
+    LDR     r1, [r0]
     CMP     r1, #0x00
-    BEQ     pendsv_exit             ; 如果标志为0，直接退出
+    BEQ     pendsv_exit
 
-    ; 清除任务切换标志
-    MOV     r1, #0x00               ; 将r1设为0
-    STR     r1, [r0]                ; 清除切换标志
+    ; clear switch flag
+    MOV     r1, #0x00
+    STR     r1, [r0]
 
-    ; 检查是否需要保存当前任务上下文
-    LDR     r0, =ul_interrupt_from_thread_sp  ; 获取当前任务指针地址
-    LDR     r1, [r0]                        ; 读取当前任务指针
+    ; check if we need to save current context
+    LDR     r0, =ul_interrupt_from_thread_sp
+    LDR     r1, [r0]
     CMP     r1, #0x00
-    BEQ     switch_to_thread        ; 如果是第一次切换（from为0），跳过保存
+    BEQ     switch_to_thread
 
-    ; 保存当前任务的上下文
-    MRS     r1, psp                 ; 获取当前任务的栈指针(PSP)
-       
-    SUBS    r1, r1, #0x20           ; r1向下自增，留出手动压栈r4-r11的栈空间
+    ; save current context
+    MRS     r1, psp
+    SUBS    r1, r1, #0x20
     LDR     r0, [r0]
-    STR     r1, [r0]                ; update from thread stack pointer
+    STR     r1, [r0]
 
-    STMIA   r1!, {r4 - r7}          ; 将r4-r7压入栈中
-
-    MOV     r4, r8                  ; 将r8-r11复制到r4-r7
+    STMIA   r1!, {r4 - r7}
+    MOV     r4, r8
     MOV     r5, r9
     MOV     r6, r10
     MOV     r7, r11
-    STMIA   r1!, {r4 - r7}          ; 将复制的r8-r11压入栈中
+    STMIA   r1!, {r4 - r7}
 
 switch_to_thread
-    ; 准备切换到新任务
-    LDR     r1, =ul_interrupt_to_thread_sp  ; 获取目标任务指针地址
-    LDR     r1, [r1]                        ; 读取目标任务指针
-    LDR     r1, [r1]                        ; 获取目标任务的栈指针
+    ; restore new thread context
+    LDR     r1, =ul_interrupt_to_thread_sp
+    LDR     r1, [r1]
+    LDR     r1, [r1]
 
-    ; 恢复目标任务的上下文   
-    LDMIA   r1!, {r4 - r7}          ; 从栈中弹出r4-r7
-    PUSH    {r4 - r7}               ; push {r4 - r7} to MSP for copy {r8 - r11}
+    LDMIA   r1!, {r4 - r7}
+    PUSH    {r4 - r7}
 
-    LDMIA   r1!, {r4 - r7}          ; pop thread {r8 - r11} high register from thread stack to {r4 - r7}
-    MOV     r8,  r4                 ; mov {r4 - r7} to {r8 - r11}
+    LDMIA   r1!, {r4 - r7}
+    MOV     r8,  r4
     MOV     r9,  r5
     MOV     r10, r6
     MOV     r11, r7
 
-    POP     {r4 - r7}               ; pop {r4 - r7} from MSP
-    
-    MSR     psp, r1                 ; 更新PSP为目标任务的栈指针
+    POP     {r4 - r7}
+    MSR     psp, r1
 
 pendsv_exit
-    ; 恢复中断状态
-    MSR     PRIMASK, r2             ; 恢复之前保存的中断状态
-
-    ; 设置返回状态
+    ; restore interrupt state and return
+    MSR     PRIMASK, r2
     MOVS    r0, #0x03
     RSBS    r0, r0, #0x00
     BX      r0
 
     ENDP
 
-
-;/*
-; * void ul_hw_context_switch_to(rt_uint32 to);
-; * r0 --> to
-; * this fucntion is used to perform the first thread switch
+;/**
+; * @brief perform the first thread switch
+; *
+; * @param to target thread stack pointer
+; *
+; * This function is used to perform the first thread switch when starting
+; * the scheduler.
 ; */
-ul_hw_context_switch_to    PROC
-    EXPORT ul_hw_context_switch_to
-    ; 设置要切换到的目标线程
-    LDR     r1, =ul_interrupt_to_thread_sp    ; 加载rt_interrupt_to_thread的地址到r1
-    STR     r0, [r1]                       ; 将r0（目标线程栈指针）存入rt_interrupt_to_thread
+ul_hw_context_switch_first    PROC
+    EXPORT ul_hw_context_switch_first
+    ; set target thread
+    LDR     r1, =ul_interrupt_to_thread_sp
+    STR     r0, [r1]
 
-    ; 设置源线程为0（因为是第一次切换，没有源线程）
-    LDR     r1, =ul_interrupt_from_thread_sp  ; 加载rt_interrupt_from_thread的地址到r1
-    MOV     r0, #0x0                       ; 将r0设置为0
-    STR     r0, [r1]                       ; 将0存入rt_interrupt_from_thread
+    ; set from thread to 0 (first switch)
+    LDR     r1, =ul_interrupt_from_thread_sp
+    MOV     r0, #0x0
+    STR     r0, [r1]
 
-    ; 设置线程切换标志为1
-    LDR     r1, =ul_thread_switch_interrupt_flag  ; 加载标志地址到r1
-    MOV     r0, #1                              ; 设置r0为1
-    STR     r0, [r1]                             ; 将标志设置为1
+    ; set switch flag
+    LDR     r1, =ul_thread_switch_interrupt_flag
+    MOV     r0, #1
+    STR     r0, [r1]
 
-    ; 设置PendSV优先级（设置为最低优先级）
-    LDR     r0, =NVIC_SHPR3               ; 加载系统优先级寄存器地址
-    LDR     r1, =NVIC_PENDSV_PRI           ; 加载PendSV优先级值（最低）
-    LDR     r2, [r0,#0x00]                 ; 读取当前寄存器值
-    ORRS    r1,r1,r2                       ; 将PendSV优先级与当前值合并
-    STR     r1, [r0]                       ; 写回修改后的值
+    ; set PendSV priority
+    LDR     r0, =NVIC_SHPR3
+    LDR     r1, =NVIC_PENDSV_PRI
+    LDR     r2, [r0,#0x00]
+    ORRS    r1,r1,r2
+    STR     r1, [r0]
 
-    ; 触发PendSV异常（这将导致上下文切换）
-    LDR     r0, =NVIC_INT_CTRL             ; 加载中断控制状态寄存器地址
-    LDR     r1, =NVIC_PENDSVSET            ; 加载触发PendSV的值
-    STR     r1, [r0]                       ; 写入以触发PendSV异常
+    ; trigger PendSV
+    LDR     r0, =NVIC_INT_CTRL
+    LDR     r1, =NVIC_PENDSVSET
+    STR     r1, [r0]
 
-    ; 恢复主栈指针(MSP).因为后续永远不会回来了，之前因为函数调用和局部变量 压的栈也没用了
-    LDR     r0, =SCB_VTOR                  ; 加载向量表偏移寄存器地址
-    LDR     r0, [r0]                       ; 读取向量表地址
-    LDR     r0, [r0]                       ; 读取向量表第一个条目（初始栈指针）
-    MSR     msp, r0                        ; 设置MSP
+    ; restore MSP
+    LDR     r0, =SCB_VTOR
+    LDR     r0, [r0]
+    LDR     r0, [r0]
+    MSR     msp, r0
 
-    ; 使能处理器级别的中断
-    CPSIE   I                              ; 使能IRQ中断
+    ; enable interrupts
+    CPSIE   I
 
-    ; 确保PendSV异常在后续操作之前被处理
-    DSB                                     ; 数据同步屏障
-    ISB                                     ; 指令同步屏障
+    ; ensure PendSV is processed
+    DSB
+    ISB
 
-    ; 正常情况下不会执行到这里
     ENDP
 
     ALIGN   4

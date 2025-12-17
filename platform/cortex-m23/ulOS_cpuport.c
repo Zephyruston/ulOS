@@ -24,10 +24,19 @@ struct stack_frame
     }exception_stack_frame;
 };
 
-/* flag in interrupt handling */
+/* 中断处理相关标志 */
 ul_uint32_t ul_interrupt_from_thread_sp, ul_interrupt_to_thread_sp;
 ul_uint32_t ul_thread_switch_interrupt_flag;
 
+/**
+ * @brief 初始化线程栈
+ *
+ * @param tentry 线程入口函数
+ * @param parameter 线程参数
+ * @param stack_addr 栈顶地址
+ * @param texit 线程退出函数
+ * @return ul_uint8_t* 初始化后的栈指针
+ */
 ul_uint8_t *ul_hw_stack_init(void       *tentry,
                              void       *parameter,
                              ul_uint8_t *stack_addr,
@@ -37,38 +46,54 @@ ul_uint8_t *ul_hw_stack_init(void       *tentry,
     ul_uint8_t         *stk;
     unsigned long       i;
 
-    //stk  = stack_addr + sizeof(ul_uint32_t);
     stk  = stack_addr;
     stk  = (ul_uint8_t *)UL_ALIGN_DOWN((ul_uint32_t)stk, 8);
     stk -= sizeof(struct stack_frame);
 
     stack_frame = (struct stack_frame *)stk;
 
-    /* init all register */
+    /* 初始化所有寄存器 */
     for (i = 0; i < sizeof(struct stack_frame) / sizeof(ul_uint32_t); i ++)
     {
         ((ul_uint32_t *)stack_frame)[i] = 0xdeadbeef;
     }
 
-    stack_frame->exception_stack_frame.r0  = (unsigned long)parameter; /* r0 : argument */
-    stack_frame->exception_stack_frame.r1  = 0;                        /* r1 */
-    stack_frame->exception_stack_frame.r2  = 0;                        /* r2 */
-    stack_frame->exception_stack_frame.r3  = 0;                        /* r3 */
-    stack_frame->exception_stack_frame.r12 = 0;                        /* r12 */
-    stack_frame->exception_stack_frame.lr  = (unsigned long)texit;     /* lr */
-    stack_frame->exception_stack_frame.pc  = (unsigned long)tentry;    /* entry point, pc */
-    stack_frame->exception_stack_frame.psr = 0x01000000L;              /* PSR */
+    /* 设置初始寄存器值 */
+    stack_frame->exception_stack_frame.r0  = (unsigned long)parameter; /* r0: 参数 */
+    stack_frame->exception_stack_frame.lr  = (unsigned long)texit;     /* lr: 退出函数 */
+    stack_frame->exception_stack_frame.pc  = (unsigned long)tentry;    /* pc: 入口函数 */
+    stack_frame->exception_stack_frame.psr = 0x01000000L;              /* PSR: Thumb模式 */
     
     /* 
-     * 栈初始化后的内存布局（假设栈增长方向是向下）：
+     * 栈初始化后的内存布局（栈增长方向向下）：
      * 
      * 高地址
-     * +-------------------+ <- stack_start + stack_size (栈顶，初始SP位置)
-     * |   xPSR            |
+     * +-------------------+ <- stack_addr (原始栈顶)
+     * |   ...             |
      * +-------------------+
-     * |   PC (entry)      | <- entry函数指针
+     * |   flag            | <- 如果启用FPU
      * +-------------------+
-     * |   LR (_thread_exit)|
+     * |   R4              |
+     * +-------------------+
+     * |   R5              |
+     * +-------------------+
+     * |   R6              |
+     * +-------------------+
+     * |   R7              |
+     * +-------------------+
+     * |   R8              |
+     * +-------------------+
+     * |   R9              |
+     * +-------------------+
+     * |   R10             |
+     * +-------------------+
+     * |   R11             |
+     * +-------------------+
+     * |   xPSR (0x01000000L)|
+     * +-------------------+
+     * |   PC (tentry)     |
+     * +-------------------+
+     * |   LR (texit)      |
      * +-------------------+
      * |   R12             |
      * +-------------------+
@@ -76,39 +101,12 @@ ul_uint8_t *ul_hw_stack_init(void       *tentry,
      * +-------------------+
      * |   R2              |
      * +-------------------+
-     * |   R1 (parameter)  | <- parameter参数指针
+     * |   R1              |
      * +-------------------+
-     * |   R0              |
-     * +-------------------+
-     * |   R11             |
-     * +-------------------+
-     * |   R10             |
-     * +-------------------+
-     * |   R9              |
-     * +-------------------+
-     * |   R8              |
-     * +-------------------+
-     * |   R7              |
-     * +-------------------+
-     * |   R6              |
-     * +-------------------+
-     * |   R5              |
-     * +-------------------+
-     * |   R4              |
-     * +-------------------+ <- stack_top
-     * |   ...             |
-     * +-------------------+
-     * |   ...             |
-     * +-------------------+
-     * |   ###...###       | <- 用'#'填充的未使用空间
-     * +-------------------+
-     * |                   |
-     * +-------------------+
+     * |   R0 (parameter)  |
+     * +-------------------+ <- stk (返回的新栈顶)
      * 低地址
-     * ^                   
-     * |                   
-     * stack_start        
      */
+
     return stk;
 }
-
