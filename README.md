@@ -8,6 +8,10 @@ Just for fun.	:-)
 
 最小占用ROM >= 3KB，RAM >= 1KB（-O2）
 
+## 移植指南，例程
+
+点击跳转 [移植工程示例](docs/transplant_guide/stm32_hal/example-f103.md)
+
 ## 特性
 
 - **优先级机制**: 0为最高优先级，最大32个优先级
@@ -57,10 +61,6 @@ ulOS/
 **通信组件**
 
 - **ul_topic**: 发布-订阅模式通信组件，支持模块间解耦通信
-
-## 快速开始（移植指南）
-
-点击跳转 [移植工程示例](docs/transplant_guide/stm32_hal/example-f103.md)
 
 ## API
 
