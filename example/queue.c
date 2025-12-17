@@ -2,7 +2,7 @@
 #if (ULOS_CONFIG_USE_QUEUE != 0)
 #include "ul_thread.h"
 #include "ul_ipc.h"
-
+#include "ulos_example.h"
 /* 测试用的消息结构体 */
 typedef struct {
     char name[16];    /* 字符串 */
@@ -21,7 +21,7 @@ void producer_thread(void *arg)
     int i = 0;
     ul_ecode err;
 
-    printf("Producer thread started\r\n");
+    ul_kprintf("Producer thread started\r\n");
 
     while (1) {
         /* 准备消息 */
@@ -33,10 +33,10 @@ void producer_thread(void *arg)
         ul_enter_critical();
         if (err == UL_EOK) {
             
-            printf("Producer sent: %s, %d\r\n", msg.name, msg.number);
+            ul_kprintf("Producer sent: %s, %d\r\n", msg.name, msg.number);
             
         } else {
-            printf("Producer send failed (queue full): %s, %d\r\n", msg.name, msg.number);
+            ul_kprintf("Producer send failed (queue full): %s, %d\r\n", msg.name, msg.number);
         }
         ul_exit_critical();
         i++;
@@ -52,7 +52,7 @@ void consumer_thread(void *arg)
     test_msg_t recv_msg;
     ul_ecode err;
 
-    printf("Consumer thread started\r\n");
+    ul_kprintf("Consumer thread started\r\n");
 
     while (1) {
         /* 接收消息 */
@@ -60,10 +60,10 @@ void consumer_thread(void *arg)
         ul_enter_critical();
         if (err == UL_EOK) {
             
-            printf("Consumer received: %s, %d\r\n", recv_msg.name, recv_msg.number);
+            ul_kprintf("Consumer received: %s, %d\r\n", recv_msg.name, recv_msg.number);
 
         } else {
-            printf("Consumer receive failed\r\n");
+            ul_kprintf("Consumer receive failed\r\n");
         }
         ul_exit_critical();
         /* 模拟处理时间 */
@@ -74,24 +74,24 @@ void consumer_thread(void *arg)
 /* 队列测试函数 */
 void queue_test_start_thread(void *p)
 {
-    printf("=== Multi-thread Queue Test Start ===\r\n");
+    ul_kprintf("=== Multi-thread Queue Test Start ===\r\n");
 
 
     test_queue = ul_queue_create("test_queue", 5, sizeof(test_msg_t));
     
-    printf("Queue created successfully\r\n");
+    ul_kprintf("Queue created successfully\r\n");
 
     /* 创建生产者线程 */
     producer_tid = ul_thread_create("producer", producer_thread, NULL, 
                         1024, 1, 1);
 
-    printf("Producer thread created\r\n");
+    ul_kprintf("Producer thread created\r\n");
     ul_thread_startup(producer_tid);
     
     /* 创建消费者线程 */
     consumer_tid = ul_thread_create("consumer", consumer_thread, NULL,
                         1024, 1, 1);
-    printf("Consumer thread created\r\n");
+    ul_kprintf("Consumer thread created\r\n");
     ul_thread_startup(consumer_tid);
     
     /* 主线程等待一段时间 */
@@ -104,7 +104,7 @@ void queue_test_start_thread(void *p)
     /* 删除队列 */
     //ul_queue_delete(test_queue);
 
-    printf("=== Multi-thread Queue Test End ===\r\n");
+    ul_kprintf("=== Multi-thread Queue Test End ===\r\n");
     
     return;
 }

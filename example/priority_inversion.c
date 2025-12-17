@@ -1,4 +1,4 @@
-
+#include "ulos_example.h"
 #include "ul_thread.h"
 #include "ul_mutex.h"
 
@@ -23,7 +23,7 @@ void high_priority_task(void *param)
         if (ul_mutex_lock(&test_mutex, ULOS_MAX_DELAY) == UL_EOK) {
             /* 访问共享资源 */
             shared_counter++;
-            printf("High priority task: counter = %d\r\n", shared_counter);
+            ul_kprintf("High priority task: counter = %d\r\n", shared_counter);
             
             /* 模拟处理时间 */
             ul_thread_delay(10);
@@ -46,7 +46,7 @@ void medium_priority_task(void *param)
         /* 模拟CPU密集型任务 */
         for (volatile ul_uint32_t i = 0; i < 1000000; i++);
         
-        printf("Medium priority task running\r\n");
+        ul_kprintf("Medium priority task running\r\n");
         
         /* 短暂延时 */
         ul_thread_delay(50);
@@ -59,14 +59,14 @@ void low_priority_task(void *param)
     while (1) {
         /* 获取互斥锁 */
         if (ul_mutex_lock(&test_mutex, ULOS_MAX_DELAY) == UL_EOK) {
-            printf("Low priority task got mutex\r\n");
+            ul_kprintf("Low priority task got mutex\r\n");
             
             /* 模拟长时间占用共享资源 */
             ul_thread_delay(500);
             
             /* 访问共享资源 */
             shared_counter++;
-            printf("Low priority task: counter = %d\r\n", shared_counter);
+            ul_kprintf("Low priority task: counter = %d\r\n", shared_counter);
             
             /* 释放互斥锁 */
             ul_mutex_unlock(&test_mutex);

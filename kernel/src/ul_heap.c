@@ -386,20 +386,20 @@ ul_uint32_t ul_heap_get_alloc_fail_count(void)
 //{
 //    CHECK_HEAP_IS_INITIALIZED();
 
-//    printf("\r\n=== Heap Status ===\r\n");
+//    ul_kprintf("\r\n=== Heap Status ===\r\n");
 //    ul_size_t total = g_heap_manager.total_size;
 //    ul_size_t used = g_heap_manager.used_size;
 //    ul_size_t free = total - used;
 //    ul_size_t max_used = g_heap_manager.max_used_size;
 
-//    printf("Total: %zu bytes\r\n", total);
-//    printf("Used: %zu bytes (%.1f%%)\r\n", used, (float)used * 100 / total);
-//    printf("Free: %zu bytes (%.1f%%)\r\n", free, (float)free * 100 / total);
-//    printf("Max Used: %zu bytes (%.1f%%)\r\n", max_used, (float)max_used * 100 / total);
+//    ul_kprintf("Total: %zu bytes\r\n", total);
+//    ul_kprintf("Used: %zu bytes (%.1f%%)\r\n", used, (float)used * 100 / total);
+//    ul_kprintf("Free: %zu bytes (%.1f%%)\r\n", free, (float)free * 100 / total);
+//    ul_kprintf("Max Used: %zu bytes (%.1f%%)\r\n", max_used, (float)max_used * 100 / total);
 
-//    printf("\r\n============= Heap Blocks =============\r\n");
-//    printf("Address\t\tSize\t\tPercent\tStatus\r\n");
-//    printf("--------\t----\t\t-------\t------\r\n");
+//    ul_kprintf("\r\n============= Heap Blocks =============\r\n");
+//    ul_kprintf("Address\t\tSize\t\tPercent\tStatus\r\n");
+//    ul_kprintf("--------\t----\t\t-------\t------\r\n");
 
 //    uint8_t *current = g_heap_manager.start_addr;
 //    uint8_t *end = g_heap_manager.end_addr;
@@ -425,7 +425,7 @@ ul_uint32_t ul_heap_get_alloc_fail_count(void)
 //        }
 
 //        // ´òÓ¡¿éÐÅÏ¢
-//        printf("0x%08X\t%zu\t\t%.1f%%\t%s\r\n",
+//        ul_kprintf("0x%08X\t%zu\t\t%.1f%%\t%s\r\n",
 //               (uint32_t)current,
 //               block->size,
 //               (float)block->size * 100 / total,
@@ -435,15 +435,15 @@ ul_uint32_t ul_heap_get_alloc_fail_count(void)
 //        current += block->size;
 //    }
 
-//    printf("\r\n=============== Free Blocks List ===============\r\n");
-//    printf("Address\t\tSize\t\tPercent\tNext\r\n");
-//    printf("--------\t----\t\t-------\t----\r\n");
+//    ul_kprintf("\r\n=============== Free Blocks List ===============\r\n");
+//    ul_kprintf("Address\t\tSize\t\tPercent\tNext\r\n");
+//    ul_kprintf("--------\t----\t\t-------\t----\r\n");
 
 //    free_block = g_heap_manager.free_list;
 
 //    while (free_block != UL_NULL)
 //    {
-//        printf("0x%08X\t%zu\t\t%.1f%%\t0x%08X\r\n",
+//        ul_kprintf("0x%08X\t%zu\t\t%.1f%%\t0x%08X\r\n",
 //               (uint32_t)free_block,
 //               free_block->size,
 //               (float)free_block->size * 100 / total,
@@ -451,8 +451,8 @@ ul_uint32_t ul_heap_get_alloc_fail_count(void)
 //        free_block = free_block->next;
 //    }
 
-//    printf("\r\n=== Statistics ===\r\n");
-//    printf("Alloc: %u, Free: %u, Fail: %u\r\n",
+//    ul_kprintf("\r\n=== Statistics ===\r\n");
+//    ul_kprintf("Alloc: %u, Free: %u, Fail: %u\r\n",
 //           g_heap_manager.alloc_count,
 //           g_heap_manager.free_count,
 //           g_heap_manager.alloc_fail_count);

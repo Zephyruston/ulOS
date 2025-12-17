@@ -2,6 +2,7 @@
 #define _UL_EXAMPLE_H
 
 #include "ul_config.h"
+#include "ul_debug.h"
 
 void example_critical_section(void);
 void example_priority_inversion(void);

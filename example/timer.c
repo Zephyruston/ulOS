@@ -1,5 +1,5 @@
 #include "ul_timer.h"
-
+#include "ulos_example.h"
 #if ( ULOS_CONFIG_USE_TIMER == 1 )
 
 /* 定时器的控制块 */
@@ -10,20 +10,20 @@ static int cnt = 0;
 /* 定时器1超时函数 */
 static void timeout1(void *parameter)
 {
-    printf("periodic timer is timeout %d\n", cnt);
+    ul_kprintf("periodic timer is timeout %d\n", cnt);
 
     /* 运行第10次，停止周期定时器 */
     if (cnt++ >= 9)
     {
         ul_timer_stop(timer1);
-        printf("periodic timer was stopped! \n");
+        ul_kprintf("periodic timer was stopped! \n");
     }
 }
 
 /* 定时器2超时函数 */
 static void timeout2(void *parameter)
 {
-    printf("one shot timer is timeout\n");
+    ul_kprintf("one shot timer is timeout\n");
 }
 
 int example_timer(void)
