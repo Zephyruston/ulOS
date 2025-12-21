@@ -31,15 +31,23 @@ static void _ipc_wakeup_first_receiver(ul_ipc_object_t *ipc, ul_thread_t *sender
                               ipc_list);
         ul_list_del_init(&thread->ipc_list);
         
-        /* 恢复到就绪列表 */
-        _thread_insert_ready_list(thread);
+        thread->err = UL_EOK;
+        
+        
+        if (thread == ul_thread_self()) // 防止是自己发给自己，重要
+        {
+            return;
+            
+        }
         
         if (thread->state == UL_THREAD_STATE_BLOCK) // 如果是在阻塞过程中恢复，需要更新时间
         {
+            ul_list_del_init(&thread->tlist);
             _update_next_wake_time();
         }
         
-        thread->err = UL_EOK;
+        /* 恢复到就绪列表 */
+        _thread_insert_ready_list(thread);
         
         /* 检查是否需要调度 */
         if (thread->current_priority < sender->current_priority)
